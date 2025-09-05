@@ -32,7 +32,8 @@ dependencies:
     sdk: flutter
 
   zugclient:
-    git: "https://github.com/JohnChernoff/zugclient"
+    path: "C:/Users/jac107/IdeaProjects/flutter/zugclient"
+    #git: "https://github.com/JohnChernoff/zugclient"
   zug_utils:
     git: "https://github.com/JohnChernoff/zug_utils"
 

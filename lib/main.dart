@@ -13,8 +13,8 @@ void main() {
   ZugUtils.getIniDefaults("temp.ini").then((defaults) {
     ZugUtils.getPrefs().then((prefs) {
       String domain = defaults["domain"] ?? "localhost";
-      int port = int.parse(defaults["port"] ?? "4444");
-      String endPoint = defaults["endpoint"] ?? "ws";
+      int port = int.parse(defaults["port"] ?? "6789");
+      String endPoint = defaults["endpoint"] ?? "zugballsrv";
       bool localServer = bool.parse(defaults["localServer"] ?? "true");
       log("Starting $appName Client, domain: $domain, port: $port, endpoint: $endPoint, localServer: $localServer");
       GameModel model = GameModel(domain,port,endPoint,prefs,localServer : localServer,showServMess : false, javalinServer: true);
@@ -25,7 +25,7 @@ void main() {
 
 class GameApp extends ZugApp {
   GameApp(super.model, super.appName,
-      {super.key, super.logLevel = Level.INFO, super.noNav = true});
+      {super.key, super.logLevel = Level.INFO, super.noNav = false});
 
   @override
   AppBar createAppBar(BuildContext context, ZugModel model,
