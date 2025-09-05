@@ -2,7 +2,7 @@ import 'package:zugclient/zug_area.dart';
 import 'package:zugclient/zug_model.dart';
 import 'game.dart';
 
-enum GameMsg { gameWin, gameLose, top, scoreRank }
+enum GameMsg { gameWin, gameLose, top, scoreRank, nextPitch }
 
 class GameModel extends ZugModel {
 
