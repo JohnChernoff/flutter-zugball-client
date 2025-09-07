@@ -1,25 +1,44 @@
 import 'dart:ui';
 import 'package:zugclient/zug_area.dart';
+import 'package:zugclient_template/zugball_fields.dart';
 
 enum ZugBallPhase {pregame}
 
 class Game extends Area {
   final int zoneWidth = 17, zoneHeight = 42;
   final double ballBuff = .2;
-  String? selectedPitch;
+  int? lastPitchSpeed;
+  String? selectedPitch, lastPitch;
   Offset selectedPitchLocation = const Offset(8.5, 21);
+  Offset? lastPitchLocation;
+  double get ballBuffWidth => zoneWidth * ballBuff;
+  double get ballBuffHeight => zoneHeight * ballBuff;
 
   Game(super.data);
   //void update(dynamic data,GameModel? model) {}
 
   void setSelectedPitchLocation(double px, double py) {
-    double totalWidth = zoneWidth + (zoneWidth * ballBuff * 2);
-    double totalHeight = zoneHeight + (zoneHeight * ballBuff * 2);
-
-    double x = (totalWidth * px) - (zoneWidth * ballBuff);
-    double y = (totalHeight * (1.0 - py)) - (zoneHeight * ballBuff);
-
+    double totalWidth = zoneWidth + (ballBuffWidth * 2);
+    double totalHeight = zoneHeight + (ballBuffHeight * 2);
+    double x = (totalWidth * px) - (ballBuffWidth);
+    double y = (totalHeight * (1.0 - py)) - (ballBuffHeight);
     selectedPitchLocation = Offset(x, y);
+  }
+
+  double getRatioX(double? x) {
+    if (x == null) return .5;
+    return (x + ballBuffWidth) / ((zoneWidth + (ballBuffWidth * 2)));
+  }
+
+  double getRatioY(double? y) {
+    if (y == null) return .5;
+    return (y + ballBuffHeight) / ((zoneHeight + (ballBuffHeight * 2)));
+  }
+
+  void setLastPitch(dynamic data) {
+    lastPitchLocation = Offset(data[ZugBallField.locX], data[ZugBallField.locY]);
+    lastPitch = data[ZugBallField.pitchType];
+    lastPitchSpeed = data[ZugBallField.speed];
   }
 
   @override

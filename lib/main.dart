@@ -28,17 +28,6 @@ class GameApp extends ZugApp {
       {super.key, super.logLevel = Level.INFO, super.noNav = false});
 
   @override
-  AppBar createAppBar(BuildContext context, ZugModel model,
-      {Widget? txt, Color? color}) {
-    return AppBar(
-      backgroundColor: Colors.black,
-      title: Text(
-          "Welcome to $appName, ${model.userName?.name ?? "Unknown User"}! ",
-          style: const TextStyle(color: Colors.white)),
-    );
-  }
-
-  @override
   Widget createMainPage(model) {
     return GamePage(model as GameModel);
   }

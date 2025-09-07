@@ -22,6 +22,14 @@ class ZugBallField {
       secondBase = "secondBase",
       thirdBase = "thirdBase",
       pitchList = "pitchList",
-      skill = "skill"
+      skill = "skill",
+      speed = "speed",
+      battingAvg = "battingAvg",
+      ops = "ops",
+      firstName = "firstName",
+      lastName = "lastName",
+      zoneWidth = "zoneWidth",
+      zoneHeight = "zoneHeight",
+      manager = "manager"
   ;
 }

@@ -2,7 +2,7 @@ import 'package:zugclient/zug_area.dart';
 import 'package:zugclient/zug_model.dart';
 import 'game.dart';
 
-enum GameMsg { gameWin, gameLose, top, scoreRank, nextPitch }
+enum GameMsg { nextPitch, pitchResult }
 
 class GameModel extends ZugModel {
 
@@ -14,30 +14,14 @@ class GameModel extends ZugModel {
     showServMess = true;
     modelName = "my_client";
     addFunctions({
-      GameMsg.gameWin: handleVictory,
-      GameMsg.gameLose: handleDefeat,
-      GameMsg.top: handleTop,
-      GameMsg.scoreRank: handleScoreRank,
+      GameMsg.pitchResult: handlePitch,
     });
     editOption(AudioOpt.music, true);
     checkRedirect("lichess.org");
   }
 
-  Future<void> handleVictory(data) async {
-    handleUpdateArea(data); //playClip("victory");
-
-  }
-
-  Future<void> handleDefeat(data) async {
-    handleUpdateArea(data); //playClip("defeat");
-  }
-
-  void handleTop(data) {
-    //TopDialog(zugAppNavigatorKey.currentContext!,data["scores"] as List<dynamic>).raise();
-  }
-
-  void handleScoreRank(data) {
-    //InfoDialog(zugAppNavigatorKey.currentContext!, "Your score ranks ${getPlace(data["rank"])} (out of ${data["scores"]})").raise();
+  void handlePitch(data) {
+    currentGame.setLastPitch(data);
   }
 
   @override
