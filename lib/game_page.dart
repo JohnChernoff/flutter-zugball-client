@@ -530,6 +530,27 @@ class _PitchSelectionWidgetState extends State<PitchSelectionWidget> {
     List<dynamic> pList = cg.upData[ZugBallField.pitching]?[ZugBallField.pitchList] ?? [];
     final theme = Theme.of(context);
 
+    // Get unique pitch types to avoid duplicate radio buttons
+    Set<String> uniquePitchTypes = {};
+    List<dynamic> uniquePitchList = [];
+    for (var pitch in pList) {
+      String pitchType = pitch[ZugBallField.pitchType] ?? '';
+      if (pitchType.isNotEmpty && !uniquePitchTypes.contains(pitchType)) {
+        uniquePitchTypes.add(pitchType);
+        uniquePitchList.add(pitch);
+      }
+    }
+
+    // Reset selection if current selection is no longer available
+    if (_selectedPitch != null && !uniquePitchTypes.contains(_selectedPitch)) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        setState(() {
+          _selectedPitch = null;
+          cg.selectedPitch = null;
+        });
+      });
+    }
+
     return Card(
       elevation: 8,
       color: const Color(0xFF1B263B),
@@ -605,12 +626,14 @@ class _PitchSelectionWidgetState extends State<PitchSelectionWidget> {
               const SizedBox(height: 12),
               Expanded(
                 child: ListView.builder(
-                  itemCount: pList.length,
+                  key: ValueKey(uniquePitchTypes.length), // Force rebuild when pitch list changes
+                  itemCount: uniquePitchList.length,
                   itemBuilder: (context, i) {
-                    String pitchType = pList.elementAt(i)[ZugBallField.pitchType];
+                    String pitchType = uniquePitchList[i][ZugBallField.pitchType];
                     bool isSelected = _selectedPitch == pitchType;
 
                     return Container(
+                      key: ValueKey(pitchType), // Unique key for each item
                       margin: const EdgeInsets.symmetric(vertical: 4),
                       decoration: BoxDecoration(
                         color: isSelected
