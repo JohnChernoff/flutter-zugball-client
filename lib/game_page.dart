@@ -544,10 +544,12 @@ class _PitchSelectionWidgetState extends State<PitchSelectionWidget> {
     // Reset selection if current selection is no longer available
     if (_selectedPitch != null && !uniquePitchTypes.contains(_selectedPitch)) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        setState(() {
-          _selectedPitch = null;
-          cg.selectedPitch = null;
-        });
+        if (mounted) {
+          setState(() {
+            _selectedPitch = null;
+            cg.selectedPitch = null;
+          });
+        }
       });
     }
 
