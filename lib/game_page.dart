@@ -8,7 +8,6 @@ import 'game.dart';
 import 'game_model.dart';
 
 class GamePage extends StatefulWidget {
-
   final GameModel model;
   const GamePage(this.model, {super.key});
 
@@ -16,79 +15,373 @@ class GamePage extends StatefulWidget {
   State<StatefulWidget> createState() => _MainPageState();
 }
 
-class _MainPageState extends State<GamePage> {
+class _MainPageState extends State<GamePage> with TickerProviderStateMixin {
+  late AnimationController _fadeController;
+  late Animation<double> _fadeAnimation;
 
   @override
   void initState() {
     super.initState();
-    widget.model.areaCmd(ClientMsg.setDeaf,data:{fieldDeafened:false});
+    _fadeController = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+    _fadeAnimation = CurvedAnimation(
+      parent: _fadeController,
+      curve: Curves.easeInOut,
+    );
+    _fadeController.forward();
+
+    widget.model.areaCmd(ClientMsg.setDeaf, data: {fieldDeafened: false});
     widget.model.areaCmd(ClientMsg.updateArea);
+  }
+
+  @override
+  void dispose() {
+    _fadeController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     Game cg = widget.model.currentGame;
-    return Column(children: [
-      if (cg.exists) Row(children: [
-        Expanded(flex: 2, child: Ballpark(
-          homeTeam: cg.upData[ZugBallField.homeTeam]?[ZugBallField.teamCity] ?? "?",
-          awayTeam: cg.upData[ZugBallField.awayTeam]?[ZugBallField.teamCity] ?? "?",
-          homeRuns: cg.upData[ZugBallField.homeTeam]?[ZugBallField.runs] ?? 0,
-          awayRuns: cg.upData[ZugBallField.awayTeam]?[ZugBallField.runs] ?? 0,
-          inning: cg.upData[ZugBallField.inning] ?? 0,
-          inningHalf: cg.upData[ZugBallField.inningHalf] ?? "TOP",
-          outs:  cg.upData[ZugBallField.outs] ?? 0,
-          balls: cg.upData[ZugBallField.balls] ?? 0,
-          strikes: cg.upData[ZugBallField.strikes] ?? 0,
-          firstBaseRunner: cg.upData[ZugBallField.firstBase] ?? "",
-          secondBaseRunner: cg.upData[ZugBallField.secondBase] ?? "",
-          thirdBaseRunner: cg.upData[ZugBallField.thirdBase] ?? "",
-          batterName: cg.upData[ZugBallField.atBat]?[ZugBallField.lastName] ?? "",
-          pitcherName: cg.upData[ZugBallField.pitching]?[ZugBallField.lastName] ?? "",
-        )),
-        Expanded(flex: 1, child: ColoredBox(color: Colors.cyan,child: Column(children: [
-          Text("Batter: ${cg.upData[ZugBallField.atBat]?[ZugBallField.firstName]} ${cg.upData[ZugBallField.atBat]?[ZugBallField.lastName]}"),
-          Text("Avg: ${(cg.upData[ZugBallField.atBat]?[ZugBallField.battingAvg] ?? 0) * 1000} "),
-          Text("OPS: ${(cg.upData[ZugBallField.atBat]?[ZugBallField.ops] ?? 0) * 1000} "),
-          ])))
-      ]),
-      Expanded(child: SizedBox(child: Row(children: [
-        Column(children: [
-          pitchInfoBox(cg),
-          Expanded(child: AspectRatio(aspectRatio: cg.zoneWidth/cg.zoneHeight,
-              child: PitchLocationWidget(widget.model))),
-        ]),
-        Expanded(flex: 1, child: PitchSelectionWidget(widget.model)),
-        Expanded(flex: 2, child: ZugChat(widget.model))
-      ],))),
-    ],);
+    final theme = Theme.of(context);
+
+    return Scaffold(
+      backgroundColor: const Color(0xFF0D1B2A), // Dark baseball theme
+      body: FadeTransition(
+        opacity: _fadeAnimation,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              if (cg.exists) ...[
+                // Header with game info
+                _buildGameHeader(cg, theme),
+                const SizedBox(height: 16),
+                // Main game content
+                Expanded(child: _buildGameContent(cg, theme)),
+              ] else
+                _buildNoGameState(theme),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
-  Widget pitchInfoBox(Game cg) {
-    return ColoredBox(color: Colors.white, child: Column(children: [
-      Text("${cg.lastPitch}"),
-      Text("MPH: ${cg.lastPitchSpeed}")
-    ]));
+  Widget _buildGameHeader(Game cg, ThemeData theme) {
+    return Card(
+      elevation: 8,
+      color: const Color(0xFF1B263B),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          children: [
+            Expanded(
+              flex: 3,
+              child: Ballpark(
+                homeTeam: cg.upData[ZugBallField.homeTeam]?[ZugBallField.teamCity] ?? "?",
+                awayTeam: cg.upData[ZugBallField.awayTeam]?[ZugBallField.teamCity] ?? "?",
+                homeRuns: cg.upData[ZugBallField.homeTeam]?[ZugBallField.runs] ?? 0,
+                awayRuns: cg.upData[ZugBallField.awayTeam]?[ZugBallField.runs] ?? 0,
+                inning: cg.upData[ZugBallField.inning] ?? 0,
+                inningHalf: cg.upData[ZugBallField.inningHalf] ?? "TOP",
+                outs: cg.upData[ZugBallField.outs] ?? 0,
+                balls: cg.upData[ZugBallField.balls] ?? 0,
+                strikes: cg.upData[ZugBallField.strikes] ?? 0,
+                firstBaseRunner: cg.upData[ZugBallField.firstBase] ?? "",
+                secondBaseRunner: cg.upData[ZugBallField.secondBase] ?? "",
+                thirdBaseRunner: cg.upData[ZugBallField.thirdBase] ?? "",
+                batterName: cg.upData[ZugBallField.atBat]?[ZugBallField.lastName] ?? "",
+                pitcherName: cg.upData[ZugBallField.pitching]?[ZugBallField.lastName] ?? "",
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              flex: 2,
+              child: _buildBatterStats(cg, theme),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBatterStats(Game cg, ThemeData theme) {
+    final batter = cg.upData[ZugBallField.atBat];
+    final battingAvg = (batter?[ZugBallField.battingAvg] ?? 0) * 1000;
+    final ops = (batter?[ZugBallField.ops] ?? 0) * 1000;
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Colors.green.shade800, Colors.green.shade600],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "AT BAT",
+            style: theme.textTheme.labelSmall?.copyWith(
+              color: Colors.white70,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1.2,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            "${batter?[ZugBallField.firstName] ?? ''} ${batter?[ZugBallField.lastName] ?? ''}",
+            style: theme.textTheme.titleMedium?.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _buildStatItem("AVG", battingAvg.toStringAsFixed(0), theme),
+              _buildStatItem("OPS", ops.toStringAsFixed(0), theme),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatItem(String label, String value, ThemeData theme) {
+    return Column(
+      children: [
+        Text(
+          label,
+          style: theme.textTheme.labelSmall?.copyWith(
+            color: Colors.white70,
+            fontSize: 10,
+          ),
+        ),
+        Text(
+          value,
+          style: theme.textTheme.titleLarge?.copyWith(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGameContent(Game cg, ThemeData theme) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Left panel - Pitch location and info
+        Expanded(
+          flex: 2,
+          child: Column(
+            children: [
+              _buildPitchInfoCard(cg, theme),
+              const SizedBox(height: 16),
+              Expanded(
+                child: Card(
+                  elevation: 8,
+                  color: const Color(0xFF1B263B),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "PITCH LOCATION",
+                          style: theme.textTheme.labelMedium?.copyWith(
+                            color: Colors.white70,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Expanded(
+                          child: AspectRatio(
+                            aspectRatio: cg.zoneWidth / cg.zoneHeight,
+                            child: PitchLocationWidget(widget.model),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 16),
+        // Middle panel - Pitch selection
+        Expanded(
+          flex: 2,
+          child: PitchSelectionWidget(widget.model),
+        ),
+        const SizedBox(width: 16),
+        // Right panel - Chat
+        Expanded(
+          flex: 3,
+          child: Card(
+            elevation: 8,
+            color: const Color(0xFF1B263B),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: ZugChat(widget.model),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPitchInfoCard(Game cg, ThemeData theme) {
+    return Card(
+      elevation: 8,
+      color: const Color(0xFF1B263B),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "LAST PITCH",
+              style: theme.textTheme.labelMedium?.copyWith(
+                color: Colors.white70,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1.2,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  cg.lastPitch ?? "None",
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: Colors.orange),
+                  ),
+                  child: Text(
+                    "${cg.lastPitchSpeed ?? 0} MPH",
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      color: Colors.orange,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNoGameState(ThemeData theme) {
+    return Center(
+      child: Card(
+        elevation: 8,
+        color: const Color(0xFF1B263B),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.all(40.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.sports_baseball,
+                size: 64,
+                color: Colors.white54,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                "No Game Active",
+                style: theme.textTheme.headlineMedium?.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                "Waiting for game to start...",
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  color: Colors.white70,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 
+// Enhanced PitchLocationWidget with better styling
 class PitchLocationWidget extends StatefulWidget {
   final GameModel model;
-  const PitchLocationWidget(this.model,{super.key});
+  const PitchLocationWidget(this.model, {super.key});
 
   @override
   State<StatefulWidget> createState() => _PitchLocationWidgetState();
 }
 
-class _PitchLocationWidgetState extends State<PitchLocationWidget> {
+class _PitchLocationWidgetState extends State<PitchLocationWidget>
+    with TickerProviderStateMixin {
   double _px = .5, _py = .5;
+  late AnimationController _crosshairController;
+  late Animation<double> _crosshairAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _crosshairController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _crosshairAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _crosshairController, curve: Curves.elasticOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _crosshairController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     Game cg = widget.model.currentGame;
     return LayoutBuilder(
       builder: (context, constraints) {
-        // Calculate buffer the same way as in Game class
         double zoneWidth = cg.zoneWidth.toDouble();
         double zoneHeight = cg.zoneHeight.toDouble();
         double ballBuff = cg.ballBuff;
@@ -96,7 +389,6 @@ class _PitchLocationWidgetState extends State<PitchLocationWidget> {
         double totalGameWidth = zoneWidth + (zoneWidth * ballBuff * 2);
         double totalGameHeight = zoneHeight + (zoneHeight * ballBuff * 2);
 
-        // Map game dimensions to UI dimensions
         double strikeZoneWidth = (zoneWidth / totalGameWidth) * constraints.maxWidth;
         double strikeZoneHeight = (zoneHeight / totalGameHeight) * constraints.maxHeight;
         double bufferX = (zoneWidth * ballBuff / totalGameWidth) * constraints.maxWidth;
@@ -110,46 +402,117 @@ class _PitchLocationWidgetState extends State<PitchLocationWidget> {
               _py = (localPosition.dy / constraints.maxHeight);
             });
             cg.setSelectedPitchLocation(_px, _py);
+            _crosshairController.reset();
+            _crosshairController.forward();
           },
-          child: Stack(children: [
-            // Red background (ball area)
-            Container(
-              width: constraints.maxWidth,
-              height: constraints.maxHeight,
-              color: Colors.red,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.3),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
-            // Blue strike zone
-            Positioned(
-              left: bufferX,
-              top: bufferY,
-              child: Container(
-                width: strikeZoneWidth,
-                height: strikeZoneHeight,
-                color: Colors.blue,
-              ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Stack(children: [
+                // Enhanced background with gradient
+                Container(
+                  width: constraints.maxWidth,
+                  height: constraints.maxHeight,
+                  decoration: BoxDecoration(
+                    gradient: RadialGradient(
+                      center: Alignment.center,
+                      colors: [
+                        const Color(0xFF8B4513).withOpacity(0.8), // Brown dirt
+                        const Color(0xFF654321),
+                      ],
+                    ),
+                  ),
+                ),
+                // Strike zone with better styling
+                Positioned(
+                  left: bufferX,
+                  top: bufferY,
+                  child: Container(
+                    width: strikeZoneWidth,
+                    height: strikeZoneHeight,
+                    decoration: BoxDecoration(
+                      color: Colors.lightBlue.withOpacity(0.3),
+                      border: Border.all(color: Colors.white, width: 2),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.lightBlue.withOpacity(0.5),
+                          blurRadius: 10,
+                          spreadRadius: 2,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                // Last Pitch with glow effect
+                if (cg.lastPitchLocation != null)
+                  Positioned(
+                    left: constraints.maxWidth * cg.getRatioX(cg.lastPitchLocation?.dx) - 16,
+                    top: constraints.maxHeight * cg.getRatioY(cg.lastPitchLocation?.dy) - 16,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.white.withOpacity(0.8),
+                            blurRadius: 10,
+                            spreadRadius: 2,
+                          ),
+                        ],
+                      ),
+                      child: const Icon(Icons.sports_baseball,
+                          color: Colors.white, size: 32),
+                    ),
+                  ),
+                // Animated Crosshair
+                AnimatedBuilder(
+                  animation: _crosshairAnimation,
+                  builder: (context, child) {
+                    return Positioned(
+                      left: constraints.maxWidth * _px - 16,
+                      top: constraints.maxHeight * _py - 16,
+                      child: Transform.scale(
+                        scale: _crosshairAnimation.value,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.red.withOpacity(0.8),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.red.withOpacity(0.6),
+                                blurRadius: 8,
+                                spreadRadius: 2,
+                              ),
+                            ],
+                          ),
+                          child: const Icon(Icons.add, color: Colors.white, size: 32),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ]),
             ),
-            // Last Pitch
-            Positioned(
-              left: constraints.maxWidth * cg.getRatioX(cg.lastPitchLocation?.dx) - 12,
-              top: constraints.maxHeight * cg.getRatioY(cg.lastPitchLocation?.dy) - 12,
-              child: const Icon(Icons.sports_baseball, color: Colors.white),
-            ),
-            // Crosshair
-            Positioned(
-              left: constraints.maxWidth * _px - 12,
-              top: constraints.maxHeight * _py - 12,
-              child: const Icon(Icons.add, color: Colors.white),
-            ),
-          ]),
+          ),
         );
       },
     );
   }
 }
 
+// Enhanced PitchSelectionWidget
 class PitchSelectionWidget extends StatefulWidget {
   final GameModel model;
-  const PitchSelectionWidget(this.model,{super.key});
+  const PitchSelectionWidget(this.model, {super.key});
 
   @override
   State<StatefulWidget> createState() => _PitchSelectionWidgetState();
@@ -160,43 +523,131 @@ class _PitchSelectionWidgetState extends State<PitchSelectionWidget> {
 
   @override
   Widget build(BuildContext context) {
-    Game cg =  widget.model.currentGame;
+    Game cg = widget.model.currentGame;
     UniqueName homeMgr = UniqueName.fromData(cg.upData[ZugBallField.homeTeam]?[ZugBallField.manager]);
     bool userHomeTeam = (homeMgr.eq(widget.model.userName));
     bool batting = cg.upData[ZugBallField.inningHalf] == "bottom" && userHomeTeam;
     List<dynamic> pList = cg.upData[ZugBallField.pitching]?[ZugBallField.pitchList] ?? [];
+    final theme = Theme.of(context);
 
-    return DecoratedBox(
-        decoration: const BoxDecoration(color: Colors.green),
+    return Card(
+      elevation: 8,
+      color: const Color(0xFF1B263B),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: RadioGroup<String>(
-            groupValue: _selectedPitch,
-            onChanged: (String? value) {
-              cg.selectedPitch = value;
-              setState(() {
-                _selectedPitch = value;
-              });
-            },
-            child: Column(children: [
-              Text("Currently ${batting ? "Batting" : "Pitching"}"),
-              ElevatedButton(
-                  onPressed: () => widget.model.areaCmd(GameMsg.nextPitch,data: {
-                    ZugBallField.pitchType : cg.selectedPitch,
-                    ZugBallField.locX : cg.selectedPitchLocation.dx,
-                    ZugBallField.locY : cg.selectedPitchLocation.dy,
-                  }),
-                  child: const Text("Submit")),
-              Expanded(child: ListView(
-                  scrollDirection: Axis.vertical,
-                  children: List.generate(pList.length, (i) {
-                    String pitchType = pList.elementAt(i)[ZugBallField.pitchType];
-                    return Row(children: [
-                      Radio<String>(value: pitchType),
-                      Text(pitchType)
-                    ]);
+          groupValue: _selectedPitch,
+          onChanged: (String? value) {
+            cg.selectedPitch = value;
+            setState(() {
+              _selectedPitch = value;
+            });
+          },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: batting ? Colors.orange.withOpacity(0.2) : Colors.blue.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: batting ? Colors.orange : Colors.blue,
+                  ),
+                ),
+                child: Text(
+                  "Currently ${batting ? "Batting" : "Pitching"}",
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    color: batting ? Colors.orange : Colors.blue,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _selectedPitch != null
+                      ? () => widget.model.areaCmd(GameMsg.nextPitch, data: {
+                    ZugBallField.pitchType: cg.selectedPitch,
+                    ZugBallField.locX: cg.selectedPitchLocation.dx,
+                    ZugBallField.locY: cg.selectedPitchLocation.dy,
                   })
-              ))
-            ])
-        )
+                      : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green.shade600,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 4,
+                  ),
+                  child: Text(
+                    "SUBMIT PITCH",
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                "SELECT PITCH TYPE",
+                style: theme.textTheme.labelMedium?.copyWith(
+                  color: Colors.white70,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.2,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: pList.length,
+                  itemBuilder: (context, i) {
+                    String pitchType = pList.elementAt(i)[ZugBallField.pitchType];
+                    bool isSelected = _selectedPitch == pitchType;
+
+                    return Container(
+                      margin: const EdgeInsets.symmetric(vertical: 4),
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? Colors.green.withOpacity(0.2)
+                            : Colors.transparent,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: isSelected
+                              ? Colors.green
+                              : Colors.white24,
+                        ),
+                      ),
+                      child: ListTile(
+                        leading: Radio<String>(
+                          value: pitchType,
+                          activeColor: Colors.green,
+                        ),
+                        title: Text(
+                          pitchType,
+                          style: theme.textTheme.bodyLarge?.copyWith(
+                            color: Colors.white,
+                            fontWeight: isSelected
+                                ? FontWeight.bold
+                                : FontWeight.normal,
+                          ),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                        dense: true,
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
