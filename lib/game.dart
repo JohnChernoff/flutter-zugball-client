@@ -2,7 +2,7 @@ import 'dart:ui';
 import 'package:zugclient/zug_area.dart';
 import 'package:zugclient_template/zugball_fields.dart';
 
-enum ZugBallPhase {pregame}
+enum ZugBallPhase {pregame,selection,result,postgame,delay}
 
 class Game extends Area {
   final int zoneWidth = 17, zoneHeight = 42;
@@ -13,6 +13,7 @@ class Game extends Area {
   Offset? lastPitchLocation;
   double get ballBuffWidth => zoneWidth * ballBuff;
   double get ballBuffHeight => zoneHeight * ballBuff;
+  List<String> lastResultLog = [];
 
   Game(super.data);
   //void update(dynamic data,GameModel? model) {}

@@ -30,6 +30,8 @@ class ZugBallField {
       lastName = "lastName",
       zoneWidth = "zoneWidth",
       zoneHeight = "zoneHeight",
-      manager = "manager"
+      manager = "manager",
+      result = "result",
+      leftHanded = "leftHanded"
   ;
 }

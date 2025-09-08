@@ -41,36 +41,34 @@ class Ballpark extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AspectRatio(aspectRatio: 8/5, child: Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Colors.green[100]!,
-            Colors.brown[200]!,
-          ],
-        ),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: CustomPaint(
-        painter: BallparkPainter(
-          firstBaseOccupied: firstBaseOccupied,
-          secondBaseOccupied: secondBaseOccupied,
-          thirdBaseOccupied: thirdBaseOccupied,
-          firstBaseRunner: firstBaseRunner,
-          secondBaseRunner: secondBaseRunner,
-          thirdBaseRunner: thirdBaseRunner,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
+    return AspectRatio(aspectRatio: 8/5,
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+              colors: [
+              Colors.green[100]!,
+              Colors.brown[200]!,
+            ],
+          ),
+          borderRadius: BorderRadius.circular(12)),
+        child: CustomPaint(
+          painter: BallparkPainter(
+            firstBaseOccupied: firstBaseOccupied,
+            secondBaseOccupied: secondBaseOccupied,
+            thirdBaseOccupied: thirdBaseOccupied,
+            firstBaseRunner: firstBaseRunner,
+            secondBaseRunner: secondBaseRunner,
+            thirdBaseRunner: thirdBaseRunner,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
             children: [
               // Scoreboard
               _buildScoreboard(),
-
               const SizedBox(height: 20),
-
               // Game State Info
               Expanded(
                 child: Stack(
@@ -84,7 +82,7 @@ class Ballpark extends StatelessWidget {
 
                     // Player names
                     Positioned(
-                      bottom: 80,
+                      bottom: 0,
                       left: 0,
                       right: 0,
                       child: _buildPlayerInfo(),
@@ -292,10 +290,10 @@ class BallparkPainter extends CustomPainter {
 
     // Center of the diamond (home plate area)
     final centerX = size.width * 0.5;
-    final centerY = size.height * 0.75;
+    final centerY = size.height - 92;
 
     // Diamond dimensions
-    final baseDistance = size.width * 0.15;
+    final baseDistance = size.width * 0.125;
 
     // Base positions
     final homeX = centerX;

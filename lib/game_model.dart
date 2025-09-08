@@ -1,5 +1,7 @@
 import 'package:zugclient/zug_area.dart';
+import 'package:zugclient/zug_fields.dart';
 import 'package:zugclient/zug_model.dart';
+import 'package:zugclient_template/zugball_fields.dart';
 import 'game.dart';
 
 enum GameMsg { nextPitch, pitchResult }
@@ -18,6 +20,17 @@ class GameModel extends ZugModel {
     });
     editOption(AudioOpt.music, true);
     checkRedirect("lichess.org");
+  }
+
+  @override
+  bool handleNewPhase(data) {
+    bool b = super.handleNewPhase(data);
+    if (currentGame.phase == ZugBallPhase.result) {
+      String resultString = data[fieldPhaseData][ZugBallField.result] ?? "";
+      currentGame.lastResultLog = resultString.split("\n");
+      currentGame.lastResultLog.remove("");
+    }
+    return b;
   }
 
   void handlePitch(data) {
