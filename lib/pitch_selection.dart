@@ -55,32 +55,30 @@ class _PitchSelectionWidgetState extends State<PitchSelectionWidget> with Ticker
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                decoration: BoxDecoration(
-                  color: batting ? Colors.orange.withOpacity(0.2) : Colors.blue.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: batting ? Colors.orange : Colors.blue,
-                  ),
-                ),
-                child: SizedBox(height: 36, child: Row(children: [
-                  Text(
-                    "Currently ${batting ? "Batting" : "Pitching"}",
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      color: batting ? Colors.orange : Colors.blue,
-                      fontWeight: FontWeight.bold,
-                    )),
-                  Expanded(child: _ptc.getPhaseTimerCircle(
-                      size: 32, // Let it fill the available space
-                      currArea: cg,
-                      progressColor: Colors.blue,
-                      backgroundColor: Colors.black,
-                      strokeWidth: 16,
-                      textColor: Colors.blue
-                  ))
-                ]),
-              )),
+              SizedBox(height: 80, child: Row(children: [
+                Expanded(flex: 2, child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: batting ? Colors.orange.withOpacity(0.2) : Colors.blue.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: batting ? Colors.orange : Colors.blue,
+                      ),
+                    ),
+                    child: Text(
+                        "Currently ${batting ? "Batting" : "Pitching"}",
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          color: batting ? Colors.orange : Colors.blue,
+                          fontWeight: FontWeight.bold,
+                        )))),
+                Expanded(flex: 1, child: _ptc.getPhaseTimerCircle(
+                    size: null, // Let it fill the available space
+                    currArea: cg,
+                    progressColor: Colors.blue,
+                    backgroundColor: Colors.black,
+                    strokeWidth: 8,
+                    textColor: Colors.blue))
+              ])),
               const SizedBox(height: 20),
               SizedBox(
                 width: double.infinity,
@@ -123,27 +121,7 @@ class _PitchSelectionWidgetState extends State<PitchSelectionWidget> with Ticker
               Expanded(child: Column(
                 children: [
                   // Pitch selection takes most space but leaves room for timer
-                  Expanded(
-                    flex: 3,
-                    child: getPitchView(cg, context),
-                  ),
-                   const SizedBox(height: 16), // Mandatory spacing
-                  // Timer gets a dedicated flex space
-                  Expanded(
-                    flex: 1, // Timer gets 1/3 of the available space
-                    child: Center(
-                      child: AspectRatio(
-                        aspectRatio: 1.0, // Keep it perfectly circular
-                        child: _ptc.getPhaseTimerCircle(
-                            size: null, // Let it fill the available space
-                            currArea: cg,
-                            backgroundColor: const Color(0xFF8B4513),
-                            strokeWidth: 16,
-                            textColor: Colors.white
-                        ),
-                      ),
-                    ),
-                  ),
+                  Expanded(child: getPitchView(cg, context)),
                   const SizedBox(height: 8), // Bottom padding
                 ],
               ))
