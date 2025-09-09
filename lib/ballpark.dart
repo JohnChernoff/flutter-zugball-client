@@ -39,6 +39,10 @@ class Ballpark extends StatelessWidget {
         secondBaseOccupied = secondBaseRunner != "",
         thirdBaseOccupied = thirdBaseRunner != "";
 
+  TextStyle infoTextStyle({color = Colors.black, fontSize = 12, fontWeight = FontWeight.bold}) {
+    return TextStyle(color:color, fontSize: fontSize, fontWeight: fontWeight);
+  }
+
   @override
   Widget build(BuildContext context) {
     return AspectRatio(aspectRatio: 8/5,
@@ -180,24 +184,15 @@ class Ballpark extends StatelessWidget {
         children: [
           Text(
             'BALLS: $balls',
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-            ),
+            style: infoTextStyle(),
           ),
           Text(
             'STRIKES: $strikes',
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-            ),
+            style: infoTextStyle(),
           ),
           Text(
             'OUTS: $outs',
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-            ),
+            style: infoTextStyle(),
           ),
         ],
       ),
@@ -217,17 +212,11 @@ class Ballpark extends StatelessWidget {
         children: [
           Text(
             'INNING $inning',
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-            ),
+            style: infoTextStyle(),
           ),
           Text(
             inningHalf.toUpperCase(),
-            style: const TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.bold,
-            ),
+            style: infoTextStyle(fontSize: 10),
           ),
         ],
       ),
@@ -246,18 +235,12 @@ class Ballpark extends StatelessWidget {
         children: [
           Text(
             'PITCHER: $pitcherName',
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-            ),
+            style: infoTextStyle(),
           ),
           const SizedBox(height: 4),
           Text(
             'BATTER: $batterName',
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-            ),
+            style: infoTextStyle()
           ),
         ],
       ),

@@ -25,6 +25,12 @@ class _PitchSelectionWidgetState extends State<PitchSelectionWidget> with Ticker
   }
 
   @override
+  void dispose() {
+    _ptc.disposeTimer();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     Game cg = widget.model.currentGame;
     UniqueName homeMgr = UniqueName.fromData(cg.upData[ZugBallField.homeTeam]?[ZugBallField.manager]);
