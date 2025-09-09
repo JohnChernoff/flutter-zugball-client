@@ -11,7 +11,7 @@ import 'game_page.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   String appName = "Template ZugClient";
-  ZugUtils.getIniDefaults("temp.ini").then((defaults) {
+  ZugUtils.getIniDefaults("defaults.ini").then((defaults) {
     ZugUtils.getPrefs().then((prefs) {
       String domain = defaults["domain"] ?? "localhost";
       int port = int.parse(defaults["port"] ?? "6789");
