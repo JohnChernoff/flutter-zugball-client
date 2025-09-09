@@ -32,35 +32,11 @@ class _PitchSelectionWidgetState extends State<PitchSelectionWidget> with Ticker
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     Game cg = widget.model.currentGame;
     UniqueName homeMgr = UniqueName.fromData(cg.upData[ZugBallField.homeTeam]?[ZugBallField.manager]);
     bool userHomeTeam = (homeMgr.eq(widget.model.userName));
     bool batting = cg.upData[ZugBallField.inningHalf] == "bottom" && userHomeTeam;
-    List<dynamic> pList = cg.upData[ZugBallField.pitching]?[ZugBallField.pitchList] ?? [];
-    final theme = Theme.of(context);
-
-    // Get unique pitch types to avoid duplicate radio buttons
-    Set<String> uniquePitchTypes = {};
-    List<dynamic> uniquePitchList = [];
-    for (var pitch in pList) {
-      String pitchType = pitch[ZugBallField.pitchType] ?? '';
-      if (pitchType.isNotEmpty && !uniquePitchTypes.contains(pitchType)) {
-        uniquePitchTypes.add(pitchType);
-        uniquePitchList.add(pitch);
-      }
-    }
-
-    // Reset selection if current selection is no longer available
-    if (_selectedPitch != null && !uniquePitchTypes.contains(_selectedPitch)) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) {
-          setState(() {
-            _selectedPitch = null;
-            cg.selectedPitch = null;
-          });
-        }
-      });
-    }
 
     return Card(
       elevation: 8,
@@ -88,14 +64,23 @@ class _PitchSelectionWidgetState extends State<PitchSelectionWidget> with Ticker
                     color: batting ? Colors.orange : Colors.blue,
                   ),
                 ),
-                child: Text(
-                  "Currently ${batting ? "Batting" : "Pitching"}",
-                  style: theme.textTheme.titleSmall?.copyWith(
-                    color: batting ? Colors.orange : Colors.blue,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
+                child: SizedBox(height: 36, child: Row(children: [
+                  Text(
+                    "Currently ${batting ? "Batting" : "Pitching"}",
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      color: batting ? Colors.orange : Colors.blue,
+                      fontWeight: FontWeight.bold,
+                    )),
+                  Expanded(child: _ptc.getPhaseTimerCircle(
+                      size: 32, // Let it fill the available space
+                      currArea: cg,
+                      progressColor: Colors.blue,
+                      backgroundColor: Colors.black,
+                      strokeWidth: 16,
+                      textColor: Colors.blue
+                  ))
+                ]),
+              )),
               const SizedBox(height: 20),
               SizedBox(
                 width: double.infinity,
@@ -117,7 +102,7 @@ class _PitchSelectionWidgetState extends State<PitchSelectionWidget> with Ticker
                     elevation: 4,
                   ),
                   child: Text(
-                    "SUBMIT PITCH",
+                    batting ? "PREDICT PITCH" : "THROW PITCH",
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1.2,
@@ -135,53 +120,110 @@ class _PitchSelectionWidgetState extends State<PitchSelectionWidget> with Ticker
                 ),
               ),
               const SizedBox(height: 12),
-              Expanded(
-                child: ListView.builder(
-                  key: ValueKey(uniquePitchTypes.length), // Force rebuild when pitch list changes
-                  itemCount: uniquePitchList.length,
-                  itemBuilder: (context, i) {
-                    String pitchType = uniquePitchList[i][ZugBallField.pitchType];
-                    bool isSelected = _selectedPitch == pitchType;
-
-                    return Container(
-                      key: ValueKey(pitchType), // Unique key for each item
-                      margin: const EdgeInsets.symmetric(vertical: 4),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? Colors.green.withOpacity(0.2)
-                            : Colors.transparent,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: isSelected
-                              ? Colors.green
-                              : Colors.white24,
+              Expanded(child: Column(
+                children: [
+                  // Pitch selection takes most space but leaves room for timer
+                  Expanded(
+                    flex: 3,
+                    child: getPitchView(cg, context),
+                  ),
+                   const SizedBox(height: 16), // Mandatory spacing
+                  // Timer gets a dedicated flex space
+                  Expanded(
+                    flex: 1, // Timer gets 1/3 of the available space
+                    child: Center(
+                      child: AspectRatio(
+                        aspectRatio: 1.0, // Keep it perfectly circular
+                        child: _ptc.getPhaseTimerCircle(
+                            size: null, // Let it fill the available space
+                            currArea: cg,
+                            backgroundColor: const Color(0xFF8B4513),
+                            strokeWidth: 16,
+                            textColor: Colors.white
                         ),
                       ),
-                      child: ListTile(
-                        leading: Radio<String>(
-                          value: pitchType,
-                          activeColor: Colors.green,
-                        ),
-                        title: Text(
-                          pitchType,
-                          style: theme.textTheme.bodyLarge?.copyWith(
-                            color: Colors.white,
-                            fontWeight: isSelected
-                                ? FontWeight.bold
-                                : FontWeight.normal,
-                          ),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-                        dense: true,
-                      ),
-                    );
-                  },
-                ),
-              ),
-              _ptc.getPhaseTimerCircle(currArea: cg, backgroundColor: const Color(0xFF8B4513), strokeWidth: 16, textColor: Colors.white)
+                    ),
+                  ),
+                  const SizedBox(height: 8), // Bottom padding
+                ],
+              ))
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget getPitchView(Game cg, BuildContext context) {
+    final theme = Theme.of(context);
+    List<dynamic> pList = cg.upData[ZugBallField.pitching]?[ZugBallField.pitchList] ?? [];
+
+    // Get unique pitch types to avoid duplicate radio buttons
+    Set<String> uniquePitchTypes = {};
+    List<dynamic> uniquePitchList = [];
+    for (var pitch in pList) {
+      String pitchType = pitch[ZugBallField.pitchType] ?? '';
+      if (pitchType.isNotEmpty && !uniquePitchTypes.contains(pitchType)) {
+        uniquePitchTypes.add(pitchType);
+        uniquePitchList.add(pitch);
+      }
+    }
+
+    // Reset selection if current selection is no longer available
+    if (_selectedPitch != null && !uniquePitchTypes.contains(_selectedPitch)) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          setState(() {
+            _selectedPitch = null;
+            cg.selectedPitch = null;
+          });
+        }
+      });
+    }
+
+    return ClipRect(
+      child: ListView.builder(
+        key: ValueKey(uniquePitchTypes.length),
+        shrinkWrap: true, // makes ListView only take needed space
+        physics: const ClampingScrollPhysics(), // Prevents bouncing beyond bounds
+        itemCount: uniquePitchList.length,
+        itemBuilder: (context, i) {
+          String pitchType = uniquePitchList[i][ZugBallField.pitchType];
+          bool isSelected = _selectedPitch == pitchType;
+
+          return Container(
+            key: ValueKey(pitchType),
+            margin: const EdgeInsets.symmetric(vertical: 4),
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? Colors.green.withOpacity(0.2)
+                  : Colors.transparent,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: isSelected
+                    ? Colors.green
+                    : Colors.white24,
+              ),
+            ),
+            child: ListTile(
+              leading: Radio<String>(
+                value: pitchType,
+                activeColor: Colors.green,
+              ),
+              title: Text(
+                pitchType,
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  color: Colors.white,
+                  fontWeight: isSelected
+                      ? FontWeight.bold
+                      : FontWeight.normal,
+                ),
+              ),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+              dense: false,
+            ),
+          );
+        },
       ),
     );
   }
