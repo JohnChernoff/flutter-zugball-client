@@ -55,8 +55,10 @@ class _PitchSelectionWidgetState extends State<PitchSelectionWidget> with Ticker
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 80, child: Row(children: [
-                Expanded(flex: 2, child: Container(
+              SizedBox(height: 80, child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     decoration: BoxDecoration(
                       color: batting ? Colors.orange.withOpacity(0.2) : Colors.blue.withOpacity(0.2),
@@ -70,7 +72,7 @@ class _PitchSelectionWidgetState extends State<PitchSelectionWidget> with Ticker
                         style: theme.textTheme.titleSmall?.copyWith(
                           color: batting ? Colors.orange : Colors.blue,
                           fontWeight: FontWeight.bold,
-                        )))),
+                        ))),
                 Expanded(flex: 1, child: _ptc.getPhaseTimerCircle(
                     size: null, // Let it fill the available space
                     currArea: cg,
