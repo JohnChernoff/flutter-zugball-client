@@ -33,7 +33,7 @@ class GameModel extends ZugModel {
     return b;
   }
 
-  void handlePitch(data) {
+  void handlePitch(data) { //print("Handling pitch: $data");
     currentGame.setLastPitch(data);
   }
 

@@ -1,9 +1,11 @@
 class ZugBallField {
-  static const String homeTeam = "homeTeam",
+  static const String
+      homeTeam = "homeTeam",
       awayTeam = "awayTeam",
       bases = "bases",
       runs = "runs",
       hits = "hits",
+      rbi = "rbi",
       walks = "walks",
       errors = "errors",
       outs = "outs",
@@ -23,7 +25,7 @@ class ZugBallField {
       thirdBase = "thirdBase",
       pitchList = "pitchList",
       skill = "skill",
-      speed = "speed",
+      speed =  "speed",
       battingAvg = "battingAvg",
       ops = "ops",
       firstName = "firstName",
@@ -35,6 +37,10 @@ class ZugBallField {
       leftHanded = "leftHanded",
       lineup = "lineup",
       topHalf = "top",
-      bottomHalf = "bottom"
+      bottomHalf = "bottom",
+      position = "position",
+      atBats = "atBats",
+      pitches = "pitches",
+      endurance = "endurance"
   ;
 }

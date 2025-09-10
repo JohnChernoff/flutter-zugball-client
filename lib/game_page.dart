@@ -99,6 +99,10 @@ class _MainPageState extends State<GamePage> with TickerProviderStateMixin {
                 thirdBaseRunner: cg.upData[ZugBallField.thirdBase] ?? "",
                 batterName: cg.getAtBat()?[ZugBallField.lastName] ?? "",
                 pitcherName: cg.upData[ZugBallField.pitching]?[ZugBallField.lastName] ?? "",
+                pitcherStrikes: cg.upData[ZugBallField.pitching]?[ZugBallField.strikes] ?? 0,
+                pitcherBalls: cg.upData[ZugBallField.pitching]?[ZugBallField.balls] ?? 0,
+                batterAvg: cg.getAtBat()?[ZugBallField.battingAvg] ?? 0.0,
+                batterOps: cg.getAtBat()?[ZugBallField.ops] ?? 0.0,
               ),
             ),
             const SizedBox(width: 16),
@@ -237,7 +241,7 @@ class _MainPageState extends State<GamePage> with TickerProviderStateMixin {
                     border: Border.all(color: Colors.orange),
                   ),
                   child: Text(
-                    "${cg.lastPitchSpeed ?? 0} MPH",
+                    "${cg.lastPitchSpeed ?? '0'} MPH",
                     style: theme.textTheme.titleSmall?.copyWith(
                       color: Colors.orange,
                       fontWeight: FontWeight.bold,

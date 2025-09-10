@@ -5,9 +5,9 @@ import 'package:zugclient_template/zugball_fields.dart';
 enum ZugBallPhase {pregame,selection,result,postgame,delay}
 
 class Game extends Area {
-  final int zoneWidth = 17, zoneHeight = 42;
+  final double zoneWidth = 17, zoneHeight = 42;
   final double ballBuff = .2;
-  int? lastPitchSpeed;
+  String? lastPitchSpeed;
   String? selectedPitch, lastPitch;
   Offset selectedPitchLocation = const Offset(8.5, 21);
   Offset? lastPitchLocation;
@@ -48,9 +48,9 @@ class Game extends Area {
   }
 
   void setLastPitch(dynamic data) {
-    lastPitchLocation = Offset(data[ZugBallField.locX], data[ZugBallField.locY]);
+    lastPitchLocation = Offset(data[ZugBallField.locX],zoneHeight - data[ZugBallField.locY]);
     lastPitch = data[ZugBallField.pitchType];
-    lastPitchSpeed = data[ZugBallField.speed];
+    lastPitchSpeed = (data[ZugBallField.speed] as double).toStringAsFixed(2);
   }
 
   @override

@@ -128,12 +128,9 @@ class BattingLineupWidget extends StatelessWidget {
     final battingAvg = batter?[ZugBallField.battingAvg] as double?;
     final ops = batter?[ZugBallField.ops] as double?;
     final bats = batter?[ZugBallField.leftHanded] ? "left" : "right";
-    final stats = batter?["stats"] as Map?;
-
-    // TODO: adjust these field names based on actual data structure
-    final hits = stats?['hits'] as int? ?? 0;
-    final atBats = stats?['atBats'] as int? ?? 0;
-    final rbi = stats?['rbi'] as int? ?? 0;
+    final hits = batter?[ZugBallField.hits] as int? ?? 0;
+    final atBats = batter?[ZugBallField.atBats] as int? ?? 0;
+    final rbi = batter?[ZugBallField.rbi] as int? ?? 0;
 
     return Container(
       decoration: BoxDecoration(

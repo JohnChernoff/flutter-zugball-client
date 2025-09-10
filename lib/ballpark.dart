@@ -18,6 +18,10 @@ class Ballpark extends StatelessWidget {
   final String thirdBaseRunner;
   final String batterName;
   final String pitcherName;
+  final int pitcherBalls;
+  final int pitcherStrikes;
+  final double batterAvg;
+  final double batterOps;
 
   const Ballpark({
     super.key,
@@ -35,6 +39,10 @@ class Ballpark extends StatelessWidget {
     required this.firstBaseRunner,
     required this.secondBaseRunner,
     required this.thirdBaseRunner,
+    required this.pitcherBalls,
+    required this.pitcherStrikes,
+    required this.batterAvg,
+    required this.batterOps,
   }) : firstBaseOccupied = firstBaseRunner != "",
         secondBaseOccupied = secondBaseRunner != "",
         thirdBaseOccupied = thirdBaseRunner != "";
@@ -234,12 +242,12 @@ class Ballpark extends StatelessWidget {
       child: Column(
         children: [
           Text(
-            'PITCHER: $pitcherName',
+            'PITCHER: $pitcherName (balls: $pitcherBalls, strikes: $pitcherStrikes)',
             style: infoTextStyle(),
           ),
           const SizedBox(height: 4),
           Text(
-            'BATTER: $batterName',
+            'BATTER: $batterName (avg: $batterAvg, ops: $batterOps)',
             style: infoTextStyle()
           ),
         ],
