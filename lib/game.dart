@@ -18,6 +18,17 @@ class Game extends Area {
   Game(super.data);
   //void update(dynamic data,GameModel? model) {}
 
+  dynamic battingTeam() {
+    return (upData[ZugBallField.inningHalf] == ZugBallField.topHalf)
+        ? upData[ZugBallField.awayTeam]
+        : upData[ZugBallField.homeTeam];
+  }
+
+  dynamic getAtBat() {
+    int i = battingTeam()?[ZugBallField.atBat] ?? 0;
+    return battingTeam()?[ZugBallField.lineup]?[i];
+  }
+
   void setSelectedPitchLocation(double px, double py) {
     double totalWidth = zoneWidth + (ballBuffWidth * 2);
     double totalHeight = zoneHeight + (ballBuffHeight * 2);

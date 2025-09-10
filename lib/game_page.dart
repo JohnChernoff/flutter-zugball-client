@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:zugclient/zug_chat.dart';
 import 'package:zugclient/zug_fields.dart';
+import 'package:zugclient_template/lineup.dart';
 import 'package:zugclient_template/pitch_location.dart';
 import 'package:zugclient_template/pitch_result.dart';
 import 'package:zugclient_template/pitch_selection.dart';
@@ -96,99 +97,18 @@ class _MainPageState extends State<GamePage> with TickerProviderStateMixin {
                 firstBaseRunner: cg.upData[ZugBallField.firstBase] ?? "",
                 secondBaseRunner: cg.upData[ZugBallField.secondBase] ?? "",
                 thirdBaseRunner: cg.upData[ZugBallField.thirdBase] ?? "",
-                batterName: cg.upData[ZugBallField.atBat]?[ZugBallField.lastName] ?? "",
+                batterName: cg.getAtBat()?[ZugBallField.lastName] ?? "",
                 pitcherName: cg.upData[ZugBallField.pitching]?[ZugBallField.lastName] ?? "",
               ),
             ),
             const SizedBox(width: 16),
             Expanded(
               flex: 2,
-              child: _buildBatterStats(cg, theme),
+              child: BattingLineupWidget(game: cg), //_buildBatterStats(cg, theme),
             ),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildBatterStats(Game cg, ThemeData theme) {
-    final batter = cg.upData[ZugBallField.atBat];
-    final battingAvg = (batter?[ZugBallField.battingAvg] ?? 0) * 1000;
-    final ops = (batter?[ZugBallField.ops] ?? 0) * 1000;
-    final leftHanded = batter?[ZugBallField.leftHanded] ?? false;
-
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.green.shade800, Colors.green.shade600],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.3),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        //crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Column(
-            children: [
-              Text(
-                "AT BAT",
-                style: theme.textTheme.labelLarge?.copyWith(
-                  color: Colors.white70,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1.2,
-                ),
-              ),
-              Text(
-                "${batter?[ZugBallField.firstName] ?? ''} ${batter?[ZugBallField.lastName] ?? ''}",
-                style: theme.textTheme.titleLarge?.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _buildStatItem("Bats: ", leftHanded ? "Left" : "Right", theme),
-              _buildStatItem("AVG", battingAvg.toStringAsFixed(0), theme),
-              _buildStatItem("OPS", ops.toStringAsFixed(0), theme),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatItem(String label, String value, ThemeData theme) {
-    return Column(
-      children: [
-        Text(
-          label,
-          style: theme.textTheme.labelSmall?.copyWith(
-            color: Colors.white70,
-            fontSize: 10,
-          ),
-        ),
-        Text(
-          value,
-          style: theme.textTheme.titleLarge?.copyWith(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ],
     );
   }
 
