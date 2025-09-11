@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 // Enhanced PitchSelectionWidget
 class PitchSelectionWidget extends StatefulWidget {
   final GameModel model;
-  const PitchSelectionWidget(this.model, {super.key});
+  final bool squashedWidth, squashedHeight;
+  const PitchSelectionWidget(this.model, {this.squashedWidth = false, this.squashedHeight = false, super.key});
 
   @override
   State<StatefulWidget> createState() => _PitchSelectionWidgetState();
@@ -68,13 +69,13 @@ class _PitchSelectionWidgetState extends State<PitchSelectionWidget> with Ticker
                       ),
                     ),
                     child: Text(
-                        "Currently ${batting ? "Batting" : "Pitching"}",
+                        "${widget.squashedWidth ? '' : 'Currently'} ${batting ? "Batting" : "Pitching"}",
                         style: theme.textTheme.titleSmall?.copyWith(
                           color: batting ? Colors.orange : Colors.blue,
                           fontWeight: FontWeight.bold,
                         ))),
                 Expanded(flex: 1, child: _ptc.getPhaseTimerCircle(
-                    size: null, // Let it fill the available space
+                    size: widget.squashedHeight ? 48 : null, // Let it fill the available space
                     currArea: cg,
                     progressColor: Colors.blue,
                     backgroundColor: Colors.black,
@@ -111,7 +112,7 @@ class _PitchSelectionWidgetState extends State<PitchSelectionWidget> with Ticker
                 ),
               ),
               const SizedBox(height: 20),
-              Text(
+              if (!widget.squashedHeight) Text(
                 "SELECT PITCH TYPE",
                 style: theme.textTheme.labelMedium?.copyWith(
                   color: Colors.white70,

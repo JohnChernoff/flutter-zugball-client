@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
 import 'ballpark.dart';
 
-class BallparkBanner extends StatelessWidget {
+class BallparkBanner extends StatefulWidget {
   final Ballpark ballpark;
 
   const BallparkBanner({
     super.key,
     required this.ballpark,
   });
+
+  @override
+  State<StatefulWidget> createState() => _BallparkBannerState();
+
+}
+
+class _BallparkBannerState extends State<BallparkBanner> {
 
   @override
   Widget build(BuildContext context) {
@@ -32,13 +39,13 @@ class BallparkBanner extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  _buildTeamScore(ballpark.awayTeam, ballpark.awayRuns, false),
+                  _buildTeamScore(widget.ballpark.awayTeam, widget.ballpark.awayRuns, false),
                   Container(
                     width: 1,
                     height: 40,
                     color: Colors.grey[600],
                   ),
-                  _buildTeamScore(ballpark.homeTeam, ballpark.homeRuns, ballpark.inningHalf == "bottom"),
+                  _buildTeamScore(widget.ballpark.homeTeam, widget.ballpark.homeRuns, widget.ballpark.inningHalf == "bottom"),
                 ],
               ),
             ),
@@ -57,18 +64,18 @@ class BallparkBanner extends StatelessWidget {
                   children: [
                     // Inning
                     Text(
-                      ballpark.inningHalf == "top" ? "T${ballpark.inning}" : "B${ballpark.inning}",
+                      widget.ballpark.inningHalf == "top" ? "T${widget.ballpark.inning}" : "B${widget.ballpark.inning}",
                       style: _infoTextStyle(color: Colors.white, fontSize: 14),
                     ),
                     // Count
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        _buildCountDot("B", ballpark.balls, 3, Colors.green[400]!),
+                        _buildCountDot("B", widget.ballpark.balls, 3, Colors.green[400]!),
                         const SizedBox(width: 4),
-                        _buildCountDot("S", ballpark.strikes, 2, Colors.red[400]!),
+                        _buildCountDot("S", widget.ballpark.strikes, 2, Colors.red[400]!),
                         const SizedBox(width: 4),
-                        _buildCountDot("O", ballpark.outs, 2, Colors.orange[400]!),
+                        _buildCountDot("O", widget.ballpark.outs, 2, Colors.orange[400]!),
                       ],
                     ),
                   ],
@@ -105,7 +112,7 @@ class BallparkBanner extends StatelessWidget {
                         const SizedBox(width: 4),
                         Expanded(
                           child: Text(
-                            "P: ${ballpark.pitcherName}",
+                            "P: ${widget.ballpark.pitcherName}",
                             style: _infoTextStyle(color: Colors.white, fontSize: 10),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -118,7 +125,7 @@ class BallparkBanner extends StatelessWidget {
                         const SizedBox(width: 4),
                         Expanded(
                           child: Text(
-                            "B: ${ballpark.batterName} ${_formatAverage(ballpark.batterAvg)}",
+                            "B: ${widget.ballpark.batterName} ${_formatAverage(widget.ballpark.batterAvg)}",
                             style: _infoTextStyle(color: Colors.white, fontSize: 10),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -129,6 +136,7 @@ class BallparkBanner extends StatelessWidget {
                 ),
               ),
             ),
+            //_buildDivider(), TextButton(onPressed: () => GamePage.showLineup, child: const Text("Lineup"))
           ],
         ),
       ),
@@ -200,13 +208,13 @@ class BallparkBanner extends StatelessWidget {
 
   Widget _buildMiniDiamond() {
     return SizedBox(
-      width: 32,
-      height: 32,
+      width: 60,
+      height: 60,
       child: CustomPaint(
         painter: MiniDiamondPainter(
-          firstBaseOccupied: ballpark.firstBaseOccupied,
-          secondBaseOccupied: ballpark.secondBaseOccupied,
-          thirdBaseOccupied: ballpark.thirdBaseOccupied,
+          firstBaseOccupied: widget.ballpark.firstBaseOccupied,
+          secondBaseOccupied: widget.ballpark.secondBaseOccupied,
+          thirdBaseOccupied: widget.ballpark.thirdBaseOccupied,
         ),
       ),
     );
@@ -265,12 +273,12 @@ class MiniDiamondPainter extends CustomPainter {
 
     for (int i = 0; i < 3; i++) {
       basePaint.color = baseOccupied[i] ? Colors.red[400]! : Colors.white;
-      canvas.drawCircle(basePositions[i], 3, basePaint);
+      canvas.drawCircle(basePositions[i], baseOccupied[i] ? 6 : 3, basePaint);
     }
 
     // Home plate
     basePaint.color = Colors.white;
-    canvas.drawCircle(Offset(center.dx, center.dy + baseOffset), 2, basePaint);
+    canvas.drawCircle(Offset(center.dx, center.dy + baseOffset), 3, basePaint);
   }
 
   @override

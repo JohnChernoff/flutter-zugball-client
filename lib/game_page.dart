@@ -22,6 +22,7 @@ class GamePage extends StatefulWidget {
 class _MainPageState extends State<GamePage> with TickerProviderStateMixin {
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
+  bool showLineup = true;
 
   @override
   void initState() {
@@ -82,11 +83,17 @@ class _MainPageState extends State<GamePage> with TickerProviderStateMixin {
               if (cg.exists) ...[
                 // Header with game info
                 constraints.maxHeight < 1080
-                    ? BallparkBanner(ballpark: park)
+                    ? Row(children: [
+                      Expanded(child: BallparkBanner(ballpark: park)),
+                      TextButton(onPressed: () => setState(() {
+                        showLineup = !showLineup;
+                      }), child: Text("${showLineup ? "Hide" : "Show"} Lineup")),
+                    ])
                     : Flexible(flex: 1, child: _buildGameHeader(cg, park, theme)),
                 const SizedBox(height: 16),
                 // Main game content
-                Expanded(flex: 1, child: _buildGameContent(cg, theme)),
+                Expanded(flex: 1, child: _buildGameContent(cg,
+                    constraints.maxHeight < 1080 ? !showLineup : true, theme)),
               ] else
                 _buildNoGameState(theme),
             ],
@@ -120,8 +127,8 @@ class _MainPageState extends State<GamePage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildGameContent(Game cg, ThemeData theme) {
-    return Row(
+  Widget _buildGameContent(Game cg, bool showChat, ThemeData theme) {
+    return LayoutBuilder(builder: (BuildContext ctx, BoxConstraints bc) => Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Left panel - Pitch location and info
@@ -141,7 +148,7 @@ class _MainPageState extends State<GamePage> with TickerProviderStateMixin {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        if (bc.maxHeight > 580) Text(
                           "PITCH LOCATION",
                           style: theme.textTheme.labelMedium?.copyWith(
                             color: Colors.white70,
@@ -170,7 +177,8 @@ class _MainPageState extends State<GamePage> with TickerProviderStateMixin {
           flex: 2,
           child: switch(cg.phase as ZugBallPhase) {
             ZugBallPhase.pregame => const Center(child: Text("Game Not Yet Started")),
-            ZugBallPhase.selection => PitchSelectionWidget(widget.model),
+            ZugBallPhase.selection => PitchSelectionWidget(widget.model,
+                squashedWidth: bc.maxWidth < 1080, squashedHeight: bc.maxHeight < 480),
             ZugBallPhase.result => StylishResultsWidget(cg),
             ZugBallPhase.postgame => const Center(child: Text("Game Over")),
             ZugBallPhase.delay => const SizedBox.shrink(),
@@ -186,12 +194,12 @@ class _MainPageState extends State<GamePage> with TickerProviderStateMixin {
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(16),
-              child: ZugChat(widget.model),
+              child: showChat ? ZugChat(widget.model) : BattingLineupWidget(game: cg, maxHeight: bc.maxHeight - 76),
             ),
           ),
         ),
       ],
-    );
+    ));
   }
 
   Widget resultWidget(Game cg) {
@@ -227,8 +235,8 @@ class _MainPageState extends State<GamePage> with TickerProviderStateMixin {
               ),
             ),
             const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            SingleChildScrollView(padding: const EdgeInsets.all(2.0), scrollDirection: Axis.horizontal, child: Row(
+              //mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Text(
                   cg.lastPitch ?? "None",
@@ -237,6 +245,7 @@ class _MainPageState extends State<GamePage> with TickerProviderStateMixin {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+                const SizedBox(width: 16),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
@@ -253,7 +262,7 @@ class _MainPageState extends State<GamePage> with TickerProviderStateMixin {
                   ),
                 ),
               ],
-            ),
+            )),
           ],
         ),
       ),
