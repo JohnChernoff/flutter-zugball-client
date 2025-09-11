@@ -10,7 +10,7 @@ import 'game_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  String appName = "Template ZugClient";
+  String appName = "Forkball";
   ZugUtils.getIniDefaults("defaults.ini").then((defaults) {
     ZugUtils.getPrefs().then((prefs) {
       String domain = defaults["domain"] ?? "localhost";
