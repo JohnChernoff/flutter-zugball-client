@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forkball.online - Splash Screen</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            height: 100vh;
+            background: linear-gradient(135deg, #0f4c3a 0%, #1a5d4a 25%, #2d8659 50%, #1a5d4a 75%, #0f4c3a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', monospace;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Animated background pattern */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                    radial-gradient(circle at 25% 25%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                    radial-gradient(circle at 75% 75%, rgba(255,255,255,0.05) 0%, transparent 50%);
+            animation: fieldShimmer 8s ease-in-out infinite;
+        }
+
+        @keyframes fieldShimmer {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.7; }
+        }
+
+        .container {
+            text-align: center;
+            z-index: 10;
+            position: relative;
+        }
+
+        .baseball {
+            width: 120px;
+            height: 120px;
+            background: #f8f8f8;
+            border-radius: 50%;
+            margin: 0 auto 30px;
+            position: relative;
+            animation: spin 3s linear infinite, bounce 2s ease-in-out infinite;
+            box-shadow: 0 0 30px rgba(255,255,255,0.3);
+        }
+
+        .baseball::before,
+        .baseball::after {
+            content: '';
+            position: absolute;
+            background: #cc0000;
+            border-radius: 2px;
+        }
+
+        /* Baseball stitches */
+        .baseball::before {
+            width: 80px;
+            height: 3px;
+            top: 35px;
+            left: 20px;
+            transform: rotate(15deg);
+            box-shadow:
+                    0 10px 0 #cc0000,
+                    0 20px 0 #cc0000,
+                    0 30px 0 #cc0000,
+                    0 40px 0 #cc0000;
+        }
+
+        .baseball::after {
+            width: 80px;
+            height: 3px;
+            top: 35px;
+            right: 20px;
+            transform: rotate(-15deg);
+            box-shadow:
+                    0 10px 0 #cc0000,
+                    0 20px 0 #cc0000,
+                    0 30px 0 #cc0000,
+                    0 40px 0 #cc0000;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .title {
+            font-size: 4rem;
+            font-weight: 900;
+            color: #ffffff;
+            text-shadow:
+                    2px 2px 4px rgba(0,0,0,0.5),
+                    0 0 20px rgba(255,255,255,0.3);
+            margin-bottom: 15px;
+            animation: titleGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from {
+                text-shadow:
+                        2px 2px 4px rgba(0,0,0,0.5),
+                        0 0 20px rgba(255,255,255,0.3);
+            }
+            to {
+                text-shadow:
+                        2px 2px 4px rgba(0,0,0,0.5),
+                        0 0 30px rgba(255,255,255,0.6),
+                        0 0 40px rgba(255,255,255,0.3);
+            }
+        }
+
+        .domain {
+            font-size: 1.5rem;
+            font-weight: 400;
+            color: #e0e0e0;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .tagline {
+            font-size: 1.1rem;
+            font-weight: 400;
+            color: #cccccc;
+            margin-bottom: 40px;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 1s forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 2s forwards;
+        }
+
+        .loading-text {
+            color: #ffffff;
+            font-size: 1rem;
+            margin-right: 15px;
+        }
+
+        .loading-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            background: #ffffff;
+            border-radius: 50%;
+            animation: loadingDots 1.5s ease-in-out infinite;
+        }
+
+        .dot:nth-child(1) { animation-delay: 0s; }
+        .dot:nth-child(2) { animation-delay: 0.2s; }
+        .dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes loadingDots {
+            0%, 60%, 100% {
+                transform: scale(1);
+                opacity: 0.4;
+            }
+            30% {
+                transform: scale(1.3);
+                opacity: 1;
+            }
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2.5rem;
+            }
+            .domain {
+                font-size: 1.2rem;
+            }
+            .baseball {
+                width: 100px;
+                height: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="baseball"></div>
+    <h1 class="title">FORKBALL</h1>
+    <div class="domain">forkball.online</div>
+    <div class="tagline">Premium Baseball Simulation Experience</div>
+    <div class="loading">
+        <span class="loading-text">Loading Game</span>
+        <div class="loading-dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

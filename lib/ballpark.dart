@@ -247,13 +247,18 @@ class Ballpark extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            'BATTER: $batterName (avg: $batterAvg, ops: $batterOps)',
+            'BATTER: $batterName (avg: ${formatAverage(batterAvg)}, ops: ${formatAverage(batterOps)})',
             style: infoTextStyle()
           ),
         ],
       ),
     );
   }
+}
+
+String formatAverage(double value) {
+  String str = value.toStringAsFixed(3);
+  return str.startsWith('0.') ? str.substring(1) : str;
 }
 
 class BallparkPainter extends CustomPainter {

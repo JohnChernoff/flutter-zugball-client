@@ -26,7 +26,10 @@ void main() {
 
 class GameApp extends ZugApp {
   GameApp(super.model, super.appName,
-      {super.key, super.logLevel = Level.INFO, super.noNav = false, super.isDark = true});
+      {super.key,
+        super.splashLandscapeImgPath = "images/forksplash.gif",
+        super.splashPortraitImgPath = "images/forksplash.gif",
+        super.logLevel = Level.INFO, super.noNav = false, super.isDark = true});
 
   @override
   Widget createLobbyPage(ZugModel model) => LobbyPage(model);
