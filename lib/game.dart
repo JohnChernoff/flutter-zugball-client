@@ -1,6 +1,6 @@
 import 'dart:ui';
+import 'package:forkball/zugball_fields.dart';
 import 'package:zugclient/zug_area.dart';
-import 'package:zugclient_template/zugball_fields.dart';
 
 enum ZugBallPhase {pregame,selection,result,postgame,delay}
 

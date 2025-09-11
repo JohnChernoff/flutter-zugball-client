@@ -1,7 +1,7 @@
 import 'package:zugclient/zug_area.dart';
 import 'package:zugclient/zug_fields.dart';
 import 'package:zugclient/zug_model.dart';
-import 'package:zugclient_template/zugball_fields.dart';
+import 'package:forkball/zugball_fields.dart';
 import 'game.dart';
 
 enum GameMsg { nextPitch, pitchResult }

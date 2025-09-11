@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:zugclient_template/zugball_fields.dart';
+import 'package:forkball/zugball_fields.dart';
 import 'game.dart';
 
 class BattingLineupWidget extends StatelessWidget {
