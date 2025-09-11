@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:zugclient/zug_chat.dart';
 import 'package:zugclient/zug_fields.dart';
+import 'package:zugclient_template/game_banner.dart';
 import 'package:zugclient_template/lineup.dart';
 import 'package:zugclient_template/pitch_location.dart';
 import 'package:zugclient_template/pitch_result.dart';
@@ -49,10 +50,30 @@ class _MainPageState extends State<GamePage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     Game cg = widget.model.currentGame;
     final theme = Theme.of(context);
-
+    Ballpark park = Ballpark(
+      homeTeam: cg.upData[ZugBallField.homeTeam]?[ZugBallField.teamCity] ?? "?",
+      awayTeam: cg.upData[ZugBallField.awayTeam]?[ZugBallField.teamCity] ?? "?",
+      homeRuns: cg.upData[ZugBallField.homeTeam]?[ZugBallField.runs] ?? 0,
+      awayRuns: cg.upData[ZugBallField.awayTeam]?[ZugBallField.runs] ?? 0,
+      inning: cg.upData[ZugBallField.inning] ?? 0,
+      inningHalf: cg.upData[ZugBallField.inningHalf] ?? "TOP",
+      outs: cg.upData[ZugBallField.outs] ?? 0,
+      balls: cg.upData[ZugBallField.balls] ?? 0,
+      strikes: cg.upData[ZugBallField.strikes] ?? 0,
+      firstBaseRunner: cg.upData[ZugBallField.firstBase] ?? "",
+      secondBaseRunner: cg.upData[ZugBallField.secondBase] ?? "",
+      thirdBaseRunner: cg.upData[ZugBallField.thirdBase] ?? "",
+      batterName: cg.getAtBat()?[ZugBallField.lastName] ?? "",
+      pitcherName: cg.upData[ZugBallField.pitching]?[ZugBallField.lastName] ?? "",
+      pitcherStrikes: cg.upData[ZugBallField.pitching]?[ZugBallField.strikes] ?? 0,
+      pitcherBalls: cg.upData[ZugBallField.pitching]?[ZugBallField.balls] ?? 0,
+      batterAvg: cg.getAtBat()?[ZugBallField.battingAvg] ?? 0.0,
+      batterOps: cg.getAtBat()?[ZugBallField.ops] ?? 0.0,
+    );
     return Scaffold(
       backgroundColor: const Color(0xFF0D1B2A), // Dark baseball theme
-      body: FadeTransition(
+      body: LayoutBuilder(builder:
+    (BuildContext context, BoxConstraints constraints) => FadeTransition(
         opacity: _fadeAnimation,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -60,7 +81,9 @@ class _MainPageState extends State<GamePage> with TickerProviderStateMixin {
             children: [
               if (cg.exists) ...[
                 // Header with game info
-                Flexible(flex: 1, child: _buildGameHeader(cg, theme)),
+                constraints.maxHeight < 1080
+                    ? BallparkBanner(ballpark: park)
+                    : Flexible(flex: 1, child: _buildGameHeader(cg, park, theme)),
                 const SizedBox(height: 16),
                 // Main game content
                 Expanded(flex: 1, child: _buildGameContent(cg, theme)),
@@ -69,11 +92,11 @@ class _MainPageState extends State<GamePage> with TickerProviderStateMixin {
             ],
           ),
         ),
-      ),
+      )),
     );
   }
 
-  Widget _buildGameHeader(Game cg, ThemeData theme) {
+  Widget _buildGameHeader(Game cg, Ballpark park, ThemeData theme) {
     return Card(
       elevation: 8,
       color: const Color(0xFF1B263B),
@@ -84,26 +107,7 @@ class _MainPageState extends State<GamePage> with TickerProviderStateMixin {
           children: [
             Expanded(
               flex: 3,
-              child: Ballpark(
-                homeTeam: cg.upData[ZugBallField.homeTeam]?[ZugBallField.teamCity] ?? "?",
-                awayTeam: cg.upData[ZugBallField.awayTeam]?[ZugBallField.teamCity] ?? "?",
-                homeRuns: cg.upData[ZugBallField.homeTeam]?[ZugBallField.runs] ?? 0,
-                awayRuns: cg.upData[ZugBallField.awayTeam]?[ZugBallField.runs] ?? 0,
-                inning: cg.upData[ZugBallField.inning] ?? 0,
-                inningHalf: cg.upData[ZugBallField.inningHalf] ?? "TOP",
-                outs: cg.upData[ZugBallField.outs] ?? 0,
-                balls: cg.upData[ZugBallField.balls] ?? 0,
-                strikes: cg.upData[ZugBallField.strikes] ?? 0,
-                firstBaseRunner: cg.upData[ZugBallField.firstBase] ?? "",
-                secondBaseRunner: cg.upData[ZugBallField.secondBase] ?? "",
-                thirdBaseRunner: cg.upData[ZugBallField.thirdBase] ?? "",
-                batterName: cg.getAtBat()?[ZugBallField.lastName] ?? "",
-                pitcherName: cg.upData[ZugBallField.pitching]?[ZugBallField.lastName] ?? "",
-                pitcherStrikes: cg.upData[ZugBallField.pitching]?[ZugBallField.strikes] ?? 0,
-                pitcherBalls: cg.upData[ZugBallField.pitching]?[ZugBallField.balls] ?? 0,
-                batterAvg: cg.getAtBat()?[ZugBallField.battingAvg] ?? 0.0,
-                batterOps: cg.getAtBat()?[ZugBallField.ops] ?? 0.0,
-              ),
+              child: park,
             ),
             const SizedBox(width: 16),
             Expanded(

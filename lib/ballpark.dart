@@ -22,6 +22,7 @@ class Ballpark extends StatelessWidget {
   final int pitcherStrikes;
   final double batterAvg;
   final double batterOps;
+  //TODO: onDeck, inHole?
 
   const Ballpark({
     super.key,
