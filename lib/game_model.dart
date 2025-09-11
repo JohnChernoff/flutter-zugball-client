@@ -12,7 +12,8 @@ class GameModel extends ZugModel {
 
   Game getGame(data) => getOrCreateArea(data) as Game;
 
-  GameModel(super.domain, super.port, super.remoteEndpoint, super.prefs, {super.localServer,super.showServMess,super.javalinServer}) {
+  GameModel(super.domain, super.port, super.remoteEndpoint, super.prefs,
+      {super.firebaseOptions, super.localServer,super.showServMess,super.javalinServer}) {
     showServMess = true;
     modelName = "my_client";
     addFunctions({

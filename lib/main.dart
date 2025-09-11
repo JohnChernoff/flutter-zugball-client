@@ -5,6 +5,7 @@ import 'package:zug_utils/zug_utils.dart';
 import 'package:zugclient/lobby_page.dart';
 import 'package:zugclient/zug_app.dart';
 import 'package:zugclient/zug_model.dart';
+import 'firebase_options.dart';
 import 'game_model.dart';
 import 'game_page.dart';
 
@@ -18,7 +19,9 @@ void main() {
       String endPoint = defaults["endpoint"] ?? "zugballsrv";
       bool localServer = bool.parse(defaults["localServer"] ?? "true");
       log("Starting $appName Client, domain: $domain, port: $port, endpoint: $endPoint, localServer: $localServer");
-      GameModel model = GameModel(domain,port,endPoint,prefs,localServer : localServer,showServMess : false, javalinServer: true);
+      GameModel model = GameModel(domain,port,endPoint,prefs,
+          firebaseOptions: DefaultFirebaseOptions.web,
+          localServer : localServer,showServMess : false, javalinServer: true);
       runApp(GameApp(model,appName));
     });
   });
