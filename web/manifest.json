@@ -1,11 +1,11 @@
 {
-    "name": "zugclient_template",
-    "short_name": "zugclient_template",
+    "name": "forkball client",
+    "short_name": "4kball",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "Template Project for the ZugClient library",
+    "description": "Client for the Forkball Server ",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
