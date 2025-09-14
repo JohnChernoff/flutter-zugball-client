@@ -1,9 +1,12 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:forkball/zugball_fields.dart';
 import 'package:logging/logging.dart';
 import 'package:zug_utils/zug_utils.dart';
 import 'package:zugclient/lobby_page.dart';
 import 'package:zugclient/zug_app.dart';
+import 'package:zugclient/zug_area.dart';
+import 'package:zugclient/zug_fields.dart';
 import 'package:zugclient/zug_model.dart';
 import 'firebase_options.dart';
 import 'game_model.dart';
@@ -35,9 +38,33 @@ class GameApp extends ZugApp {
         super.logLevel = Level.INFO, super.noNav = false, super.isDark = true});
 
   @override
-  Widget createLobbyPage(ZugModel model) => LobbyPage(model);
+  Widget createLobbyPage(ZugModel model) => ForkLobby(model);
 
   @override
   Widget createMainPage(model) => GamePage(model as GameModel);
 
+}
+
+class ForkLobby extends LobbyPage {
+  const ForkLobby(super.model, {super.key});
+
+  @override
+  Widget selectedArea(BuildContext context, {Color? bkgCol, Color? txtCol, Iterable? occupants}) {
+    return Column(children: [
+      getPlayRow(ZugBallField.homeTeam),
+      getPlayRow(ZugBallField.awayTeam)
+    ]);
+  }
+
+  Widget getPlayRow(String teamSide) {
+    dynamic team = model.currentArea.upData[teamSide];
+    if (team != null) {
+      UniqueName uName = UniqueName.fromData(team[ZugBallField.manager]);
+      String teamAbbrev = team[ZugBallField.abbrev] ?? "???";
+      return Row(children: [
+        Text("$uName - $teamAbbrev"),
+      ]);
+    }
+    return const SizedBox.shrink();
+  }
 }

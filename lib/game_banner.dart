@@ -73,9 +73,9 @@ class _BallparkBannerState extends State<BallparkBanner> {
                       children: [
                         _buildCountDot("B", widget.ballpark.balls, 3, Colors.green[400]!),
                         const SizedBox(width: 4),
-                        _buildCountDot("S", widget.ballpark.strikes, 2, Colors.red[400]!),
+                        _buildCountDot("S", widget.ballpark.strikes, 2, Colors.orange[400]!),
                         const SizedBox(width: 4),
-                        _buildCountDot("O", widget.ballpark.outs, 2, Colors.orange[400]!),
+                        _buildCountDot("O", widget.ballpark.outs, 2, Colors.blue[400]!),
                       ],
                     ),
                   ],

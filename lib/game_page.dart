@@ -11,6 +11,7 @@ import 'ballpark.dart';
 import 'game.dart';
 import 'game_model.dart';
 
+//TODO: classic inning by inning score banner
 class GamePage extends StatefulWidget {
   final GameModel model;
   const GamePage(this.model, {super.key});

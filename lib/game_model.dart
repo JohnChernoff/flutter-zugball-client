@@ -1,3 +1,6 @@
+import 'package:forkball/teams.dart';
+import 'package:zug_utils/zug_dialogs.dart';
+import 'package:zugclient/zug_app.dart';
 import 'package:zugclient/zug_area.dart';
 import 'package:zugclient/zug_fields.dart';
 import 'package:zugclient/zug_model.dart';
@@ -21,6 +24,30 @@ class GameModel extends ZugModel {
     });
     editOption(AudioOpt.music, true);
     checkRedirect("lichess.org");
+  }
+
+  @override
+  void newArea({String? title}) {
+    selectTeam().then((t) =>
+      areaCmd(ClientMsg.newArea,id: userName.toString(), data: {
+        ZugBallField.abbrev : t?.abbrev
+      })
+    );
+  }
+
+  @override
+  void joinArea(String id) {
+    areaCmd(ClientMsg.joinArea,data: {
+      id: id,
+      ZugBallField.abbrev : selectTeam()
+    });
+  }
+
+  Future<Team?> selectTeam() async {
+    if (zugAppNavigatorKey.currentContext != null) {
+      return await TeamSelectionDialog.show(zugAppNavigatorKey.currentContext!);
+    }
+    return null;
   }
 
   @override
