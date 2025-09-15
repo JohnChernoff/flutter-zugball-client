@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:forkball/teams.dart';
 import 'package:forkball/zugball_fields.dart';
 import 'package:logging/logging.dart';
 import 'package:zug_utils/zug_utils.dart';
@@ -51,20 +52,23 @@ class ForkLobby extends LobbyPage {
 
   @override
   Widget selectedArea(BuildContext context, {Color? bkgCol, Color? txtCol, Iterable? occupants}) {
-    return Column(children: [
+    return Row(children: [
       getPlayRow(ZugBallField.homeTeam),
       getPlayRow(ZugBallField.awayTeam)
     ]);
   }
 
   Widget getPlayRow(String teamSide) {
-    dynamic team = model.currentArea.upData[teamSide];
-    if (team != null) {
-      UniqueName uName = UniqueName.fromData(team[ZugBallField.manager]);
-      String teamAbbrev = team[ZugBallField.abbrev] ?? "???";
-      return Row(children: [
-        Text("$uName - $teamAbbrev"),
-      ]);
+    dynamic teamData = model.currentArea.upData[teamSide];
+    if (teamData != null) {
+      Team? team = Team.getTeamFromAbbrev(teamData[ZugBallField.abbrev]);
+      UniqueName mgrName = UniqueName.fromData(teamData[ZugBallField.manager]);
+      Widget? teamImg = team?.getImage();
+      return SizedBox(width: 255, height: 255, child: Column(children: [
+        Text(teamSide == ZugBallField.homeTeam ? "Home" : "Away"),
+        teamImg ?? const SizedBox.shrink(),
+        Text("Manager: $mgrName"),
+      ]));
     }
     return const SizedBox.shrink();
   }

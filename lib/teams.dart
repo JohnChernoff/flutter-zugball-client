@@ -37,10 +37,40 @@ enum Team {
   texas("Texas", "Tardigrades", "TEX", TeamDivision.alCentral);
 //TODO: Atlanta, Charlotte, Nashville, Toronto, Montreal, Washington, Kansas City, Salt Lake City, San Jose, Vancouver
 
-
   const Team(this.city, this.name, this.abbrev, this.div);
   final String city, name, abbrev;
   final TeamDivision div;
+
+  static Team? getTeamFromAbbrev(String? abbrev) {
+    for (Team t in values) {
+      if (t.abbrev == abbrev) return t;
+    } return null;
+  }
+
+  Widget getImage() {
+    return Image.asset(
+      'images/teams/$abbrev.png',
+      fit: BoxFit.fill,
+      errorBuilder: (context, error, stackTrace) { //print("Error: $error");
+        // Fallback if image doesn't exist
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.blue.shade100,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Center(
+            child: Text(
+              abbrev,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.blue.shade700,
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
 }
 
 class TeamSelectionDialog extends StatelessWidget {
@@ -178,28 +208,7 @@ class _TeamCard extends StatelessWidget {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(8),
-                    child: Image.asset(
-                      'images/teams/${team.abbrev}.png',
-                      fit: BoxFit.fill,
-                      errorBuilder: (context, error, stackTrace) { //print("Error: $error");
-                        // Fallback if image doesn't exist
-                        return Container(
-                          decoration: BoxDecoration(
-                            color: Colors.blue.shade100,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Center(
-                            child: Text(
-                              team.abbrev,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.blue.shade700,
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
+                    child: team.getImage(),
                   ),
                 ),
               ),
