@@ -11,7 +11,7 @@ enum TeamDivision {
   final String dbColName, fullname;
 }
 
-//TODO: Atlanta, Charlotte, Nashville, Toronto, Montreal, Washington, Kansas City, Salt Lake City, San Jose, Vancouver
+//TODO: Atlanta, Charlotte, Nashville, Toronto, Montreal, Kansas City, Salt Lake City, San Jose, Vancouver
 enum Team {
   boston("Boston", "Beacons", "BOS", TeamDivision.alEast, Colors.red, Colors.white),
   newYork("New York", "Bagels", "NY", TeamDivision.alEast, Colors.green, Colors.white),

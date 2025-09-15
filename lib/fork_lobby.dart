@@ -126,11 +126,11 @@ class ForkLobby extends LobbyPage {
             end: Alignment.bottomCenter,
             colors: [
               isHome
-                  ? const Color(0xFF065F46).withOpacity(0.1)
-                  : const Color(0xFF7C2D12).withOpacity(0.1),
+                  ? team?.color1 ?? const Color(0xFF065F46).withOpacity(0.1)
+                  : team?.color1 ?? const Color(0xFF7C2D12).withOpacity(0.1),
               isHome
-                  ? const Color(0xFF065F46).withOpacity(0.05)
-                  : const Color(0xFF7C2D12).withOpacity(0.05),
+                  ? team?.color2 ?? const Color(0xFF065F46).withOpacity(0.05)
+                  : team?.color2 ?? const Color(0xFF7C2D12).withOpacity(0.05),
             ],
           ),
           borderRadius: BorderRadius.circular(16),
@@ -205,8 +205,11 @@ class ForkLobby extends LobbyPage {
         ),
       );
     }
-
     // Empty state
+    return getEmptyTeamWidget(cardWidth,cardHeight,isHome);
+  }
+
+  Widget getEmptyTeamWidget(double cardWidth, double cardHeight, bool isHome) {
     return Container(
       width: cardWidth,
       height: cardHeight,
@@ -338,11 +341,12 @@ class ForkLobby extends LobbyPage {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Text(
-        team.name,
+        "${team.city} ${team.name}",
         style: TextStyle(
           fontSize: fontSize,
           fontWeight: FontWeight.bold,
           //color: isHome ? const Color(0xFF065F46) : const Color(0xFF7C2D12),
+          //backgroundColor: Colors.black,
           color: team.color1,
           letterSpacing: 0.5,
         ),
