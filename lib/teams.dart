@@ -11,35 +11,36 @@ enum TeamDivision {
   final String dbColName, fullname;
 }
 
-enum Team {
-  boston("Boston", "Beacons", "BOS", TeamDivision.alEast),
-  newYork("New York", "Bagels", "NY", TeamDivision.alEast),
-  baltimore("Baltimore", "Chopsticks", "BAL", TeamDivision.alEast),
-  philadelphia("Philadelphia", "Pretzels", "PHI", TeamDivision.nlEast),
-  washington('Washington',"Fillibusters","WAS",TeamDivision.alEast),
-  chicago("Chicago", "Moonshiners", "CHI", TeamDivision.nlCentral),
-  saintLouis("Saint Louis", "Archers", "STL", TeamDivision.nlCentral),
-  pittsburgh("Pittsburgh", "Protons", "PIT", TeamDivision.nlEast),
-  charlotte("Charlotte","Cryptids","CHA",TeamDivision.alCentral),
-  phoenix("Phoenix", "Firebirds", "PHX", TeamDivision.alWest),
-  sanDiego("San Diego", "Submarines", "SD", TeamDivision.nlWest),
-  losAngeles("Los Angeles", "Avocados", "LA", TeamDivision.nlWest),
-  sanFrancisco("San Francisco", "Sourdoughs", "SF", TeamDivision.nlWest),
-  portland("Portland", "Proletariats", "POR", TeamDivision.alWest),
-  seattle("Seattle", "Beanbags", "SEA", TeamDivision.alWest),
-  santaFe("Santa Fe","Roadrunners","SFE",TeamDivision.alWest),
-  denver("Denver","Highlanders","DEN",TeamDivision.nlWest),
-  milwaulkee("Milwaulkee", "Mashers", "MIL", TeamDivision.nlCentral),
-  cincinatti("Cincinatti", "Hamburgers", "CIN", TeamDivision.nlCentral),
-  cleveland("Cleveland", "Backbeats", "CLE", TeamDivision.alCentral),
-  florida("Florida", "Flamingoes", "FLA", TeamDivision.nlEast),
-  newOrleans("New Orleans", "Po'Boys", "NO", TeamDivision.nlCentral),
-  texas("Texas", "Tardigrades", "TEX", TeamDivision.alCentral);
 //TODO: Atlanta, Charlotte, Nashville, Toronto, Montreal, Washington, Kansas City, Salt Lake City, San Jose, Vancouver
+enum Team {
+  boston("Boston", "Beacons", "BOS", TeamDivision.alEast, Colors.red, Colors.white),
+  newYork("New York", "Bagels", "NY", TeamDivision.alEast, Colors.green, Colors.white),
+  baltimore("Baltimore", "Chopsticks", "BAL", TeamDivision.alEast, Colors.orange, Colors.white),
+  philadelphia("Philadelphia", "Pretzels", "PHI", TeamDivision.nlEast, Colors.green, Colors.black),
+  washington('Washington',"Fillibusters","WAS",TeamDivision.alEast, Colors.white, Colors.grey),
+  chicago("Chicago", "Moonshiners", "CHI", TeamDivision.nlCentral, Colors.grey, Colors.black),
+  saintLouis("Saint Louis", "Archers", "STL", TeamDivision.nlCentral, Colors.red, Colors.blue),
+  pittsburgh("Pittsburgh", "Protons", "PIT", TeamDivision.nlEast, Colors.purple, Colors.yellow),
+  charlotte("Charlotte","Cryptids","CHA",TeamDivision.alCentral, Colors.green, Colors.blue),
+  phoenix("Phoenix", "Firebirds", "PHX", TeamDivision.alWest, Colors.red, Colors.yellowAccent),
+  sanDiego("San Diego", "Submarines", "SD", TeamDivision.nlWest, Colors.blue, Colors.white),
+  losAngeles("Los Angeles", "Avocados", "LA", TeamDivision.nlWest, Colors.green, Colors.yellowAccent),
+  sanFrancisco("San Francisco", "Sourdoughs", "SF", TeamDivision.nlWest, Colors.brown, Colors.black),
+  portland("Portland", "Proletariats", "POR", TeamDivision.alWest, Colors.red, Colors.black),
+  seattle("Seattle", "Beanbags", "SEA", TeamDivision.alWest, Colors.lightBlue, Colors.greenAccent),
+  santaFe("Santa Fe","Roadrunners","SFE",TeamDivision.alWest, Colors.blueAccent, Colors.redAccent),
+  denver("Denver","Highlanders","DEN",TeamDivision.nlWest, Colors.blueGrey, Colors.brown),
+  milwaulkee("Milwaulkee", "Mashers", "MIL", TeamDivision.nlCentral, Colors.greenAccent, Colors.orange),
+  cincinatti("Cincinatti", "Hamburgers", "CIN", TeamDivision.nlCentral, Colors.pink, Colors.greenAccent),
+  cleveland("Cleveland", "Backbeats", "CLE", TeamDivision.alCentral, Colors.brown, Colors.orangeAccent),
+  florida("Florida", "Flamingoes", "FLA", TeamDivision.nlEast, Colors.lightBlue, Colors.white),
+  newOrleans("New Orleans", "Po'Boys", "NO", TeamDivision.nlCentral, Colors.purple, Colors.black),
+  texas("Texas", "Tardigrades", "TEX", TeamDivision.alCentral, Colors.red, Colors.grey);
 
-  const Team(this.city, this.name, this.abbrev, this.div);
+  final Color color1, color2;
   final String city, name, abbrev;
   final TeamDivision div;
+  const Team(this.city, this.name, this.abbrev, this.div, this.color1, this.color2);
 
   static Team? getTeamFromAbbrev(String? abbrev) {
     for (Team t in values) {

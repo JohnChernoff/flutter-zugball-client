@@ -317,16 +317,16 @@ class ForkLobby extends LobbyPage {
           ),
           child: Padding(
             padding: const EdgeInsets.all(12),
-            child: teamImg ?? Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.grey.shade300,
-              ),
-              child: Icon(
-                Icons.sports_baseball,
-                size: imageSize * 0.4,
-                color: Colors.grey.shade600,
-              ),
+            child: ClipOval(
+              child: teamImg ??
+                  Container(
+                    color: Colors.grey.shade300,
+                    child: Icon(
+                      Icons.sports_baseball,
+                      size: imageSize * 0.4,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
             ),
           ),
         ),
@@ -342,9 +342,8 @@ class ForkLobby extends LobbyPage {
         style: TextStyle(
           fontSize: fontSize,
           fontWeight: FontWeight.bold,
-          color: isHome
-              ? const Color(0xFF065F46)
-              : const Color(0xFF7C2D12),
+          //color: isHome ? const Color(0xFF065F46) : const Color(0xFF7C2D12),
+          color: team.color1,
           letterSpacing: 0.5,
         ),
         textAlign: TextAlign.center,
