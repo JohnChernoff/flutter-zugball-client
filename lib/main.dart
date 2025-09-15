@@ -1,16 +1,12 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:forkball/teams.dart';
-import 'package:forkball/zugball_fields.dart';
 import 'package:logging/logging.dart';
 import 'package:zug_utils/zug_utils.dart';
-import 'package:zugclient/lobby_page.dart';
 import 'package:zugclient/zug_app.dart';
-import 'package:zugclient/zug_area.dart';
 import 'package:zugclient/zug_chat.dart';
-import 'package:zugclient/zug_fields.dart';
 import 'package:zugclient/zug_model.dart';
 import 'firebase_options.dart';
+import 'fork_lobby.dart';
 import 'game_model.dart';
 import 'game_page.dart';
 
@@ -47,29 +43,4 @@ class GameApp extends ZugApp {
 
 }
 
-class ForkLobby extends LobbyPage {
-  const ForkLobby(super.model, {super.zugChat,super.key});
 
-  @override
-  Widget selectedArea(BuildContext context, {Color? bkgCol, Color? txtCol, Iterable? occupants}) {
-    return Row(children: [
-      getPlayRow(ZugBallField.homeTeam),
-      getPlayRow(ZugBallField.awayTeam)
-    ]);
-  }
-
-  Widget getPlayRow(String teamSide) {
-    dynamic teamData = model.currentArea.upData[teamSide];
-    if (teamData != null) {
-      Team? team = Team.getTeamFromAbbrev(teamData[ZugBallField.abbrev]);
-      UniqueName mgrName = UniqueName.fromData(teamData[ZugBallField.manager]);
-      Widget? teamImg = team?.getImage();
-      return SizedBox(width: 255, height: 255, child: Column(children: [
-        Text(teamSide == ZugBallField.homeTeam ? "Home" : "Away"),
-        teamImg ?? const SizedBox.shrink(),
-        Text("Manager: $mgrName"),
-      ]));
-    }
-    return const SizedBox.shrink();
-  }
-}
