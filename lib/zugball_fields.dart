@@ -44,6 +44,8 @@ class ZugBallField {
       endurance = "endurance",
       swing = "swing",
       teamId = "teamId",
-      abbrev = "abbrev"
+      abbrev = "abbrev",
+      pitch = "pitch",
+      location = "location"
   ;
 }

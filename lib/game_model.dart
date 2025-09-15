@@ -1,5 +1,4 @@
 import 'package:forkball/teams.dart';
-import 'package:zug_utils/zug_dialogs.dart';
 import 'package:zugclient/zug_app.dart';
 import 'package:zugclient/zug_area.dart';
 import 'package:zugclient/zug_fields.dart';
@@ -7,7 +6,7 @@ import 'package:zugclient/zug_model.dart';
 import 'package:forkball/zugball_fields.dart';
 import 'game.dart';
 
-enum GameMsg { nextPitch, pitchResult }
+enum GameMsg { nextPitch, pitchResult, guessNotification }
 
 class GameModel extends ZugModel {
 
@@ -21,6 +20,7 @@ class GameModel extends ZugModel {
     modelName = "my_client";
     addFunctions({
       GameMsg.pitchResult: handlePitch,
+      GameMsg.guessNotification: handleGuessNotification,
     });
     editOption(AudioOpt.music, true);
     checkRedirect("lichess.org");
@@ -62,7 +62,12 @@ class GameModel extends ZugModel {
   }
 
   void handlePitch(data) { //print("Handling pitch: $data");
-    currentGame.setLastPitch(data);
+    getGame(data).setLastPitch(data);
+  }
+
+  void handleGuessNotification(data) {
+    currentGame.setGuessResult(data[ZugBallField.pitch] ?? false,
+        data[ZugBallField.location] ?? false);
   }
 
   @override

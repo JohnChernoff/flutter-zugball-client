@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:forkball/game_overlay.dart';
 import 'package:zugclient/zug_chat.dart';
 import 'package:zugclient/zug_fields.dart';
 import 'package:forkball/game_banner.dart';
@@ -178,8 +179,10 @@ class _MainPageState extends State<GamePage> with TickerProviderStateMixin {
           flex: 2,
           child: switch(cg.phase as ZugBallPhase) {
             ZugBallPhase.pregame => const Center(child: Text("Game Not Yet Started")),
-            ZugBallPhase.selection => PitchSelectionWidget(widget.model,
-                squashedWidth: bc.maxWidth < 1080, squashedHeight: bc.maxHeight < 480),
+            ZugBallPhase.selection =>
+                GuessResultOverlay(game: cg, child:
+                PitchSelectionWidget(widget.model,
+                squashedWidth: bc.maxWidth < 1080, squashedHeight: bc.maxHeight < 480)),
             ZugBallPhase.result => StylishResultsWidget(cg),
             ZugBallPhase.postgame => const Center(child: Text("Game Over")),
             ZugBallPhase.delay => const SizedBox.shrink(),

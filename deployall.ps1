@@ -13,7 +13,7 @@ if ($LASTEXITCODE -eq 0) {
 
     # Deploy using WSL rsync (preserve config files and images)
     Write-Host "Deploying to server..." -ForegroundColor Yellow
-    wsl bash -c "rsync -av --delete --exclude='*.ini' --exclude='*.config' --exclude='assets/assets/images/' build/web/ root@john-chernoff.com:/var/www/forkball.online/"
+    wsl bash -c "rsync -av --delete --exclude='*.ini' --exclude='*.config' --exclude='assets/assets/images/' --exclude='assets/images/' build/web/ root@john-chernoff.com:/var/www/forkball.online/"
 
     if ($LASTEXITCODE -eq 0) {
         Write-Host "Deployment complete!" -ForegroundColor Green

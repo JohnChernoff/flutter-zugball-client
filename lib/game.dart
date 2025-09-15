@@ -4,6 +4,12 @@ import 'package:zugclient/zug_area.dart';
 
 enum ZugBallPhase {pregame,selection,result,postgame,delay}
 
+class Guess {
+  bool guessedPitch, guessedLocation;
+  Guess(this.guessedPitch,this.guessedLocation);
+}
+
+// Minimal changes to your existing Game class
 class Game extends Area {
   final double zoneWidth = 17, zoneHeight = 42;
   final double ballBuff = .2;
@@ -14,9 +20,30 @@ class Game extends Area {
   double get ballBuffWidth => zoneWidth * ballBuff;
   double get ballBuffHeight => zoneHeight * ballBuff;
   List<String> lastResultLog = [];
+  Guess guess = Guess(false, false);
+  DateTime? lastGuessResultTime;
 
   Game(super.data);
-  //void update(dynamic data,GameModel? model) {}
+
+  void setGuessResult(bool pitchCorrect, bool locationCorrect) {
+    guess = Guess(pitchCorrect, locationCorrect);
+    lastGuessResultTime = DateTime.now();
+  }
+
+  // Helper method to check if result is fresh
+  bool get hasFreshGuessResult {
+    if (lastGuessResultTime == null) return false;
+    if (!guess.guessedPitch && !guess.guessedLocation) return false;
+    return DateTime.now().difference(lastGuessResultTime!).inSeconds < 5;
+  }
+
+  // Clear old results
+  void clearOldResults() {
+    if (!hasFreshGuessResult) {
+      guess = Guess(false, false);
+      lastGuessResultTime = null;
+    }
+  }
 
   dynamic battingTeam() {
     return (upData[ZugBallField.inningHalf] == ZugBallField.topHalf)
@@ -33,7 +60,7 @@ class Game extends Area {
     double totalWidth = zoneWidth + (ballBuffWidth * 2);
     double totalHeight = zoneHeight + (ballBuffHeight * 2);
     double x = (totalWidth * px) - (ballBuffWidth);
-    double y = (totalHeight * (1.0 - py)) - (ballBuffHeight);
+    double y = (totalHeight * (py)) - (ballBuffHeight);
     selectedPitchLocation = Offset(x, y);
   }
 
@@ -48,7 +75,7 @@ class Game extends Area {
   }
 
   void setLastPitch(dynamic data) {
-    lastPitchLocation = Offset(data[ZugBallField.locX],zoneHeight - data[ZugBallField.locY]);
+    lastPitchLocation = Offset(data[ZugBallField.locX], zoneHeight - data[ZugBallField.locY]);
     lastPitch = data[ZugBallField.pitchType];
     lastPitchSpeed = (data[ZugBallField.speed] as double).toStringAsFixed(2);
   }
@@ -57,5 +84,4 @@ class Game extends Area {
   List<Enum> getPhases() {
     return ZugBallPhase.values;
   }
-
 }
