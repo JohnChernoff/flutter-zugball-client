@@ -6,6 +6,7 @@ import 'package:zug_utils/zug_utils.dart';
 import 'package:zugclient/lobby_page.dart';
 import 'package:zugclient/zug_app.dart';
 import 'package:zugclient/zug_area.dart';
+import 'package:zugclient/zug_chat.dart';
 import 'package:zugclient/zug_fields.dart';
 import 'package:zugclient/zug_model.dart';
 import 'firebase_options.dart';
@@ -38,7 +39,7 @@ class GameApp extends ZugApp {
         super.logLevel = Level.INFO, super.noNav = false, super.isDark = true});
 
   @override
-  Widget createLobbyPage(ZugModel model) => ForkLobby(model);
+  Widget createLobbyPage(ZugModel model) => ForkLobby(model, zugChat: ZugChat(model));
 
   @override
   Widget createMainPage(model) => GamePage(model as GameModel);
@@ -46,7 +47,7 @@ class GameApp extends ZugApp {
 }
 
 class ForkLobby extends LobbyPage {
-  const ForkLobby(super.model, {super.key});
+  const ForkLobby(super.model, {super.zugChat,super.key});
 
   @override
   Widget selectedArea(BuildContext context, {Color? bkgCol, Color? txtCol, Iterable? occupants}) {
