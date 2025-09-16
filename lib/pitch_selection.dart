@@ -329,7 +329,7 @@ class _PitchSelectionWidgetState extends State<PitchSelectionWidget> with Ticker
               return DropdownMenuItem<String>(
                 value: pitchType,
                 child: Text(
-                  pitchType,
+                  "$pitchType (${pitch[ZugBallField.skill]})",
                   style: const TextStyle(color: Colors.white),
                 ),
               );
@@ -349,7 +349,6 @@ class _PitchSelectionWidgetState extends State<PitchSelectionWidget> with Ticker
         itemBuilder: (context, i) {
           String pitchType = uniquePitchList[i][ZugBallField.pitchType];
           bool isSelected = _selectedPitch == pitchType;
-
           return Container(
             key: ValueKey(pitchType),
             margin: const EdgeInsets.symmetric(vertical: 4),
@@ -370,7 +369,7 @@ class _PitchSelectionWidgetState extends State<PitchSelectionWidget> with Ticker
                 activeColor: Colors.green,
               ),
               title: Text(
-                pitchType,
+                "$pitchType (${uniquePitchList[i][ZugBallField.skill]})",
                 style: theme.textTheme.bodyLarge?.copyWith(
                   color: Colors.white,
                   fontWeight: isSelected
