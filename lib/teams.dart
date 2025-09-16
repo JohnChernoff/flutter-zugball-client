@@ -11,18 +11,18 @@ enum TeamDivision {
   final String dbColName, fullname;
 }
 
-//TODO: Atlanta, Charlotte, Nashville, Toronto, Montreal, Kansas City, Salt Lake City, San Jose, Vancouver
+//TODO: Salt Lake City, San Jose, Vancouver, Columbus/Houston/Dallas
 enum Team {
   boston("Boston", "Beacons", "BOS", TeamDivision.alEast, Colors.red, Colors.white),
   newYork("New York", "Bagels", "NY", TeamDivision.alEast, Colors.green, Colors.white),
   baltimore("Baltimore", "Chopsticks", "BAL", TeamDivision.alEast, Colors.orange, Colors.white),
   philadelphia("Philadelphia", "Pretzels", "PHI", TeamDivision.nlEast, Colors.green, Colors.black),
   washington('Washington',"Fillibusters","WAS",TeamDivision.alEast, Colors.white, Colors.grey),
-  chicago("Chicago", "Moonshiners", "CHI", TeamDivision.nlCentral, Colors.grey, Colors.black),
+  chicago("Chicago", "Moonshiners", "CHI", TeamDivision.alCentral, Colors.grey, Colors.black),
   saintLouis("Saint Louis", "Archers", "STL", TeamDivision.nlCentral, Colors.red, Colors.blue),
   pittsburgh("Pittsburgh", "Protons", "PIT", TeamDivision.nlEast, Colors.purple, Colors.yellow),
   charlotte("Charlotte","Cryptids","CHA",TeamDivision.alCentral, Colors.green, Colors.blue),
-  phoenix("Phoenix", "Firebirds", "PHX", TeamDivision.alWest, Colors.red, Colors.yellowAccent),
+  phoenix("Phoenix", "Firebirds", "PHX", TeamDivision.nlWest, Colors.red, Colors.yellowAccent),
   sanDiego("San Diego", "Submarines", "SD", TeamDivision.nlWest, Colors.blue, Colors.white),
   losAngeles("Los Angeles", "Avocados", "LA", TeamDivision.nlWest, Colors.green, Colors.yellowAccent),
   sanFrancisco("San Francisco", "Sourdoughs", "SF", TeamDivision.nlWest, Colors.brown, Colors.black),
@@ -35,7 +35,14 @@ enum Team {
   cleveland("Cleveland", "Backbeats", "CLE", TeamDivision.alCentral, Colors.brown, Colors.orangeAccent),
   florida("Florida", "Flamingoes", "FLA", TeamDivision.nlEast, Colors.lightBlue, Colors.white),
   newOrleans("New Orleans", "Po'Boys", "NO", TeamDivision.nlCentral, Colors.purple, Colors.black),
-  texas("Texas", "Tardigrades", "TEX", TeamDivision.alCentral, Colors.red, Colors.grey);
+  texas("Texas", "Tardigrades", "TEX", TeamDivision.alCentral, Colors.red, Colors.grey),
+  toronto("Toronto", "Timbits", "TOR", TeamDivision.alEast, Colors.blue, Colors.brown),
+  montreal("Montreal", "Mounties", "MON", TeamDivision.nlEast, Colors.red, Colors.green),
+  nashville("Nashville", "Naturals", "NSH", TeamDivision.nlCentral, Colors.white, Colors.green),
+  atlanta("Altanta", "Turntables", "ATL", TeamDivision.nlEast, Colors.redAccent, Colors.greenAccent),
+  kansasCity("Kansas City", "Steakouts", "KC", TeamDivision.alCentral, Colors.grey, Colors.red),
+  oakland("Oakland", "Anchors", "OAK", TeamDivision.alWest, Color.fromARGB(255, 33, 12, 192), Colors.cyan),
+  vancouver("Vancouver", "Orcas", "VAN", TeamDivision.alWest, Colors.blue, Colors.red);
 
   final Color color1, color2;
   final String city, name, abbrev;

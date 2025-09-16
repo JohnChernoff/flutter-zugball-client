@@ -141,7 +141,7 @@ class _MainPageState extends State<GamePage> with TickerProviderStateMixin {
               _buildPitchInfoCard(cg, theme),
               const SizedBox(height: 16),
               Expanded(
-                child: Card(
+                child:  GuessResultOverlay(game: cg, child: Card(
                   elevation: 8,
                   color: const Color(0xFF1B263B),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -162,13 +162,13 @@ class _MainPageState extends State<GamePage> with TickerProviderStateMixin {
                         Expanded(
                           child: AspectRatio(
                             aspectRatio: cg.zoneWidth / cg.zoneHeight,
-                            child: PitchLocationWidget(widget.model),
+                            child:PitchLocationWidget(widget.model),
                           ),
                         ),
                       ],
                     ),
                   ),
-                ),
+                )),
               ),
             ],
           ),
@@ -179,10 +179,8 @@ class _MainPageState extends State<GamePage> with TickerProviderStateMixin {
           flex: 2,
           child: switch(cg.phase as ZugBallPhase) {
             ZugBallPhase.pregame => const Center(child: Text("Game Not Yet Started")),
-            ZugBallPhase.selection =>
-                GuessResultOverlay(game: cg, child:
-                PitchSelectionWidget(widget.model,
-                squashedWidth: bc.maxWidth < 1080, squashedHeight: bc.maxHeight < 480)),
+            ZugBallPhase.selection => PitchSelectionWidget(widget.model,
+                squashedWidth: bc.maxWidth < 1080, squashedHeight: bc.maxHeight < 480),
             ZugBallPhase.result => StylishResultsWidget(cg),
             ZugBallPhase.postgame => const Center(child: Text("Game Over")),
             ZugBallPhase.delay => const SizedBox.shrink(),
