@@ -1,3 +1,5 @@
+import 'package:forkball/game_model.dart';
+import 'package:forkball/seasons.dart';
 import 'package:zugclient/lobby_page.dart';
 import 'package:flutter/material.dart';
 import 'package:forkball/teams.dart';
@@ -5,11 +7,21 @@ import 'package:forkball/zugball_fields.dart';
 import 'package:zugclient/zug_area.dart';
 
 class ForkLobby extends LobbyPage {
-  const ForkLobby(super.model, {super.zugChat, super.key});
+
+  const ForkLobby(super.model, {super.seekButt = false, super.zugChat, super.key});
+
+  @override
+  List<CommandButtonData> getExtraCmdButtons(BuildContext context) {
+    List<CommandButtonData> extras = super.getExtraCmdButtons(context);
+    extras.add(CommandButtonData("Seasons", Colors.purple, Icons.calendar_month, () => (model as GameModel).toggleSeasonMode()));
+    return extras;
+  }
 
   @override
   Widget selectedArea(BuildContext context, {Color? bkgCol, Color? txtCol, Iterable? occupants}) {
-    return LayoutBuilder(builder: (BuildContext ctx, BoxConstraints bc) => Container(
+    GameModel gameModel = model as GameModel;
+    return gameModel.showSeasons ? SeasonWidget(gameModel) :
+      LayoutBuilder(builder: (BuildContext ctx, BoxConstraints bc) => Container(
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
@@ -160,7 +172,7 @@ class ForkLobby extends LobbyPage {
                 child: Container(
                   decoration: const BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage('assets/baseball_pattern.png'), // Add your pattern
+                      image: AssetImage('assets/images/forksplash.gif'), // Add your pattern
                       fit: BoxFit.cover,
                       opacity: 0.03,
                     ),

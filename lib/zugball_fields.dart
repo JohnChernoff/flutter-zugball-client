@@ -46,6 +46,10 @@ class ZugBallField {
       teamId = "teamId",
       abbrev = "abbrev",
       pitch = "pitch",
-      location = "location"
+      location = "location",
+      seasonName = "seasonName",
+      seasonId = "seasonId",
+      currentSeason = "currentSeason",
+      seasons = "seasons"
   ;
 }

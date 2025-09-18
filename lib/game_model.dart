@@ -4,11 +4,27 @@ import 'package:zugclient/zug_area.dart';
 import 'package:zugclient/zug_fields.dart';
 import 'package:zugclient/zug_model.dart';
 import 'package:forkball/zugball_fields.dart';
+import 'package:zugclient/zug_option.dart';
 import 'game.dart';
 
-enum GameMsg { nextPitch, pitchResult, guessNotification }
+enum GameMsg { nextPitch, pitchResult, guessNotification, selectTeam, subPlayer, createSeason, switchSeason, listSeasons, getStandings }
+enum GameOptions { gameMode }
+enum GameMode {exhibition,season}
+
+class Season {
+  int id;
+  String name;
+  Season(this.id,this.name);
+  Season.fromJson(Map<String, dynamic> json) :
+        id = json[ZugBallField.seasonId],
+        name = json[ZugBallField.seasonName];
+}
 
 class GameModel extends ZugModel {
+
+  bool showSeasons = false;
+  Season? currentSeason;
+  List<Season> seasons = [];
 
   Game get currentGame => currentArea as Game;
 
@@ -18,9 +34,13 @@ class GameModel extends ZugModel {
       {super.firebaseOptions, super.localServer,super.showServMess,super.javalinServer}) {
     showServMess = true;
     modelName = "my_client";
+    registerEnum(GameMode.values);
+    setOptionFromEnum(GameOptions.gameMode, GameMode.exhibition.asOption(label: "Game Mode"));
+    //print ("Current mode: ${getOption(GameOptions.gameMode)}");
     addFunctions({
       GameMsg.pitchResult: handlePitch,
       GameMsg.guessNotification: handleGuessNotification,
+      GameMsg.listSeasons : handleSeasonList,
     });
     editOption(AudioOpt.music, true);
     checkRedirect("lichess.org");
@@ -68,6 +88,23 @@ class GameModel extends ZugModel {
   void handleGuessNotification(data) {
     currentGame.setGuessResult(data[ZugBallField.pitch] ?? false,
         data[ZugBallField.location] ?? false);
+  }
+
+  void handleSeasonList(data) {
+      currentSeason = Season.fromJson(data[ZugBallField.currentSeason]);
+      seasons.clear();
+      for (dynamic listData in data[ZugBallField.seasons]) {
+        seasons.add(Season.fromJson(listData));
+      }
+  }
+
+  void toggleSeasonMode() {
+    showSeasons = !showSeasons;
+    notifyListeners();
+  }
+
+  void createSeason(String name) {
+    send(GameMsg.createSeason,data: {ZugBallField.seasonName : name});
   }
 
   @override

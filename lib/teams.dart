@@ -11,7 +11,6 @@ enum TeamDivision {
   final String dbColName, fullname;
 }
 
-//TODO: Salt Lake City, San Jose, Vancouver, Columbus/Houston/Dallas
 enum Team {
   boston("Boston", "Beacons", "BOS", TeamDivision.alEast, Colors.red, Colors.white),
   newYork("New York", "Bagels", "NY", TeamDivision.alEast, Colors.green, Colors.white),
@@ -30,8 +29,8 @@ enum Team {
   seattle("Seattle", "Beanbags", "SEA", TeamDivision.alWest, Colors.lightBlue, Colors.greenAccent),
   santaFe("Santa Fe","Roadrunners","SFE",TeamDivision.alWest, Colors.blueAccent, Colors.redAccent),
   denver("Denver","Highlanders","DEN",TeamDivision.nlWest, Colors.blueGrey, Colors.brown),
-  milwaulkee("Milwaulkee", "Mashers", "MIL", TeamDivision.nlCentral, Colors.greenAccent, Colors.orange),
-  cincinatti("Cincinatti", "Hamburgers", "CIN", TeamDivision.nlCentral, Colors.pink, Colors.greenAccent),
+  milwaukee("Milwaukee", "Mashers", "MIL", TeamDivision.nlCentral, Colors.greenAccent, Colors.orange),
+  cincinnati("Cincinnati", "Hamburgers", "CIN", TeamDivision.nlCentral, Colors.pink, Colors.greenAccent),
   cleveland("Cleveland", "Backbeats", "CLE", TeamDivision.alCentral, Colors.brown, Colors.orangeAccent),
   florida("Florida", "Flamingoes", "FLA", TeamDivision.nlEast, Colors.lightBlue, Colors.white),
   newOrleans("New Orleans", "Po'Boys", "NO", TeamDivision.nlCentral, Colors.purple, Colors.black),
@@ -39,7 +38,7 @@ enum Team {
   toronto("Toronto", "Timbits", "TOR", TeamDivision.alEast, Colors.blue, Colors.brown),
   montreal("Montreal", "Mounties", "MON", TeamDivision.nlEast, Colors.red, Colors.green),
   nashville("Nashville", "Naturals", "NSH", TeamDivision.nlCentral, Colors.white, Colors.green),
-  atlanta("Altanta", "Turntables", "ATL", TeamDivision.nlEast, Colors.redAccent, Colors.greenAccent),
+  atlanta("Atlanta", "Turntables", "ATL", TeamDivision.nlEast, Colors.redAccent, Colors.greenAccent),
   kansasCity("Kansas City", "Steakouts", "KC", TeamDivision.alCentral, Colors.grey, Colors.red),
   oakland("Oakland", "Anchors", "OAK", TeamDivision.alWest, Color.fromARGB(255, 33, 12, 192), Colors.cyan),
   vancouver("Vancouver", "Orcas", "VAN", TeamDivision.alWest, Colors.blue, Colors.red);
