@@ -20,6 +20,10 @@ class SeasonWidgetState extends State<SeasonWidget> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            ElevatedButton(
+                onPressed: () => widget.model.send(GameMsg.getSchedule, data:
+                { ZugBallField.seasonId : widget.model.currentSeason?.id}),
+                child: const Text("Get Schedule")),
             Text(
               'Seasons',
               style: Theme.of(context).textTheme.headlineSmall,
@@ -89,7 +93,7 @@ class SeasonWidgetState extends State<SeasonWidget> {
                     selected: season.id == widget.model.currentSeason?.id,
                   ),
                 ),
-            ).toList(),
+            ),
           ],
         ),
       ),
@@ -139,8 +143,4 @@ class SeasonWidgetState extends State<SeasonWidget> {
     );
   }
 
-  void _notifySeasonChange(Season season) {
-    // This method is no longer needed since we handle it in _selectSeason
-    print('Season changed to: ${season.name} (ID: ${season.id})');
-  }
 }

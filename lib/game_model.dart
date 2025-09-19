@@ -1,4 +1,6 @@
+import 'package:forkball/schedule.dart';
 import 'package:forkball/teams.dart';
+import 'package:zug_utils/zug_dialogs.dart';
 import 'package:zugclient/zug_app.dart';
 import 'package:zugclient/zug_area.dart';
 import 'package:zugclient/zug_fields.dart';
@@ -7,7 +9,8 @@ import 'package:forkball/zugball_fields.dart';
 import 'package:zugclient/zug_option.dart';
 import 'game.dart';
 
-enum GameMsg { nextPitch, pitchResult, guessNotification, selectTeam, subPlayer, createSeason, switchSeason, listSeasons, getStandings }
+enum GameMsg { nextPitch, pitchResult, guessNotification, selectTeam, subPlayer, createSeason, switchSeason, listSeasons, getStandings,
+getSchedule,scheduleResponse,teamMap}
 enum GameOptions { gameMode }
 enum GameMode {exhibition,season}
 
@@ -25,6 +28,7 @@ class GameModel extends ZugModel {
   bool showSeasons = false;
   Season? currentSeason;
   List<Season> seasons = [];
+  Map<int, Team> teamMap = {};
 
   Game get currentGame => currentArea as Game;
 
@@ -41,6 +45,8 @@ class GameModel extends ZugModel {
       GameMsg.pitchResult: handlePitch,
       GameMsg.guessNotification: handleGuessNotification,
       GameMsg.listSeasons : handleSeasonList,
+      GameMsg.scheduleResponse : handleSchedule,
+      GameMsg.teamMap : handleTeamMap
     });
     editOption(AudioOpt.music, true);
     checkRedirect("lichess.org");
@@ -96,6 +102,26 @@ class GameModel extends ZugModel {
       for (dynamic listData in data[ZugBallField.seasons]) {
         seasons.add(Season.fromJson(listData));
       }
+  }
+
+  void handleTeamMap(data) {
+    for (Map<String,dynamic> entry in data) {
+      Team? team = Team.values.where((t) => t.abbrev == entry[ZugBallField.abbrev]).firstOrNull;
+      if (team != null) teamMap.putIfAbsent(entry[ZugBallField.teamId], () => team);
+    }
+  }
+  
+  void handleSchedule(data) {
+    final games = ScheduleParser.parseScheduleFromJson(data);
+    // Parse played games
+    Set<String> playedGames = {};
+    if (data['playedGames'] != null) {
+      for (String gameKey in data['playedGames']) {
+        playedGames.add(gameKey);
+      }
+    }
+    ZugDialogs.showClickableDialog(ScheduleViewPage(schedule: games,
+        teamMap: teamMap, userTeam: Team.sanFrancisco, playedGames: playedGames));
   }
 
   void toggleSeasonMode() {
