@@ -1,7 +1,10 @@
 class ZugBallField {
   static const String
-  homeTeam = "homeTeam",
+      homeTeam = "homeTeam",
       awayTeam = "awayTeam",
+      side = "side",
+      home = "home",
+      away = "away",
       bases = "bases",
       runs = "runs",
       hits = "hits",
@@ -50,6 +53,8 @@ class ZugBallField {
       seasonName = "seasonName",
       seasonId = "seasonId",
       currentSeason = "currentSeason",
-      seasons = "seasons"
+      seasons = "seasons",
+      gameMode = "gameMode",
+      slot = "slot"
   ;
 }

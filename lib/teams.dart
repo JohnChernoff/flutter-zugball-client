@@ -81,7 +81,8 @@ enum Team {
 }
 
 class TeamSelectionDialog extends StatelessWidget {
-  const TeamSelectionDialog({super.key});
+  final String side;
+  const TeamSelectionDialog(this.side, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -105,9 +106,9 @@ class TeamSelectionDialog extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'Select Your Team',
-                  style: TextStyle(
+                Text(
+                  'Select $side Team',
+                  style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
@@ -169,10 +170,10 @@ class TeamSelectionDialog extends StatelessWidget {
   }
 
   // Static method to show the dialog and return selected team
-  static Future<Team?> show(BuildContext context) {
+  static Future<Team?> show(String side, BuildContext context) {
     return showDialog<Team>(
       context: context,
-      builder: (context) => const TeamSelectionDialog(),
+      builder: (context) => TeamSelectionDialog(side),
     );
   }
 }

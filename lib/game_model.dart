@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart' show Icon, Icons;
 import 'package:forkball/schedule.dart';
 import 'package:forkball/teams.dart';
 import 'package:zug_utils/zug_dialogs.dart';
@@ -52,26 +53,43 @@ class GameModel extends ZugModel {
     checkRedirect("lichess.org");
   }
 
-  @override
-  void newArea({String? title}) {
-    selectTeam().then((t) =>
+  void newExhibitionGame() {
+    selectTeam("Home").then((homeTeam) => selectTeam("Away").then((awayTeam) async =>
       areaCmd(ClientMsg.newArea,id: userName.toString(), data: {
-        ZugBallField.abbrev : t?.abbrev
+        ZugBallField.homeTeam : homeTeam?.abbrev,
+        ZugBallField.awayTeam : awayTeam?.abbrev,
+        ZugBallField.side : (await getSide()).name
       })
-    );
+    ));
+  }
+
+  void newSeasonalGame({required Team team, required int slot}) {
+    areaCmd(ClientMsg.newArea,id: userName.toString(), data: {
+      ZugBallField.abbrev : team.abbrev,
+      ZugBallField.gameMode : "season",
+      ZugBallField.slot : slot
+    });
+  }
+
+  Future<Side> getSide() async {
+    return await ZugDialogs.getIcon("Select Home/Away", [
+      const Icon(Icons.home),const Icon(Icons.airplanemode_active)
+    ]) == 0 ? Side.home : Side.away;
   }
 
   @override
   void joinArea(String id) {
-    areaCmd(ClientMsg.joinArea,data: {
-      id: id,
-      ZugBallField.abbrev : selectTeam() //TODO: await
+    getSide().then((home) {
+      areaCmd(ClientMsg.joinArea,data: {
+        id: id,
+        ZugBallField.homeTeam : home
+      });
     });
   }
 
-  Future<Team?> selectTeam() async {
+  Future<Team?> selectTeam(String side) async {
     if (zugAppNavigatorKey.currentContext != null) {
-      return await TeamSelectionDialog.show(zugAppNavigatorKey.currentContext!);
+      return await TeamSelectionDialog.show(side,zugAppNavigatorKey.currentContext!);
     }
     return null;
   }

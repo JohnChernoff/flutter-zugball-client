@@ -18,6 +18,11 @@ class ForkLobby extends LobbyPage {
   }
 
   @override
+  CommandButtonData getCreateButton({Color normCol = Colors.greenAccent}) {
+    return CommandButtonData("New Exhibition Game", normCol, Icons.sports_baseball, (model as GameModel).newExhibitionGame);
+  }
+
+  @override
   Widget selectedArea(BuildContext context, {Color? bkgCol, Color? txtCol, Iterable? occupants}) {
     GameModel gameModel = model as GameModel;
     return gameModel.showSeasons ? SeasonWidget(gameModel) :

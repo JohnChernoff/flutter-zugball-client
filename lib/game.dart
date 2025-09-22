@@ -3,6 +3,7 @@ import 'package:forkball/zugball_fields.dart';
 import 'package:zugclient/zug_area.dart';
 
 enum ZugBallPhase {pregame,selection,result,postgame,delay}
+enum Side {home,away}
 
 class Guess {
   bool guessedPitch, guessedLocation;
