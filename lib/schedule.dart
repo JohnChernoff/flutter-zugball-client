@@ -77,7 +77,6 @@ class _SeasonScheduleWidgetState extends State<SeasonScheduleWidget>
     List<ScheduledGame> games = widget.schedule;
 
     if (_selectedTeamFilter != null) {
-      // Need to find the database ID that corresponds to this Team enum
       int? selectedTeamId = widget.teamMap.entries
           .where((entry) => entry.value == _selectedTeamFilter)
           .map((entry) => entry.key)
@@ -88,10 +87,15 @@ class _SeasonScheduleWidgetState extends State<SeasonScheduleWidget>
         game.homeTeamId == selectedTeamId ||
             game.awayTeamId == selectedTeamId
         ).toList();
+
+        // Sort by global season slot (the shared number), then assign display numbers in order
+        games.sort((a, b) => a.seasonSlot.compareTo(b.seasonSlot));
       }
+    } else {
+      games.sort((a, b) => a.seasonSlot.compareTo(b.seasonSlot));
     }
 
-    return games..sort((a, b) => a.seasonSlot.compareTo(b.seasonSlot));
+    return games;
   }
 
   List<ScheduledGame> _getUpcomingGames() {
@@ -222,14 +226,17 @@ class _SeasonScheduleWidgetState extends State<SeasonScheduleWidget>
     final bool isUserTeamGame = _selectedTeamFilter != null &&
         (homeTeam == _selectedTeamFilter || awayTeam == _selectedTeamFilter);
 
+    // Calculate display game number based on position in filtered games
+    List<ScheduledGame> allFilteredGames = _getFilteredGames();
+    int displayGameNumber = allFilteredGames.indexOf(game) + 1;
+
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      color: isPlayed ? Colors.grey[100] : null,
+      // ... rest of the Card widget stays the same, but use displayGameNumber
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: isUserTeamGame ? Colors.blue : Colors.grey[300],
           child: Text(
-            game.homeSlot.toString(),
+            displayGameNumber.toString(),
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.bold,

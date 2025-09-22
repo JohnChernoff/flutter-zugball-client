@@ -65,7 +65,7 @@ class GameModel extends ZugModel {
   void joinArea(String id) {
     areaCmd(ClientMsg.joinArea,data: {
       id: id,
-      ZugBallField.abbrev : selectTeam()
+      ZugBallField.abbrev : selectTeam() //TODO: await
     });
   }
 
