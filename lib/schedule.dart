@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:forkball/game_model.dart';
 import 'package:forkball/teams.dart';
 
 // Data models matching your JSON structure
@@ -34,6 +35,7 @@ class ScheduledGame {
 }
 
 class SeasonScheduleWidget extends StatefulWidget {
+  final GameModel model;
   final List<ScheduledGame> schedule;
   final Map<int, Team> teamMap; // Map from database team ID to Team enum
   final Team? selectedTeam;
@@ -41,6 +43,7 @@ class SeasonScheduleWidget extends StatefulWidget {
 
   const SeasonScheduleWidget({
     super.key,
+    required this.model,
     required this.schedule,
     required this.teamMap,
     this.selectedTeam,
@@ -233,7 +236,9 @@ class _SeasonScheduleWidgetState extends State<SeasonScheduleWidget>
     return Card(
       // ... rest of the Card widget stays the same, but use displayGameNumber
       child: ListTile(
-        leading: CircleAvatar(
+        leading: InkWell(
+            onTap: () => widget.model.newSeasonalGame(slot: game.seasonSlot),
+            child: CircleAvatar(
           backgroundColor: isUserTeamGame ? Colors.blue : Colors.grey[300],
           child: Text(
             displayGameNumber.toString(),
@@ -243,7 +248,7 @@ class _SeasonScheduleWidgetState extends State<SeasonScheduleWidget>
               color: isUserTeamGame ? Colors.white : Colors.black87,
             ),
           ),
-        ),
+        )),
         title: Row(
           children: [
             // Away team logo
@@ -293,38 +298,7 @@ class _SeasonScheduleWidgetState extends State<SeasonScheduleWidget>
   }
 }
 
-// Usage example widget
-class ScheduleViewPage extends StatelessWidget {
-  final List<ScheduledGame> schedule;
-  final Map<int, Team> teamMap; // Map from database team ID to Team enum
-  final Team? userTeam;
-  final Set<String> playedGames;
 
-  const ScheduleViewPage({
-    super.key,
-    required this.schedule,
-    required this.teamMap,
-    this.userTeam,
-    required this.playedGames,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Season Schedule'),
-        backgroundColor: Colors.green[700],
-        foregroundColor: Colors.white,
-      ),
-      body: SeasonScheduleWidget(
-        schedule: schedule,
-        teamMap: teamMap,
-        selectedTeam: userTeam,
-        playedGames: playedGames,
-      ),
-    );
-  }
-}
 
 // Example of how to parse the JSON from your server
 class ScheduleParser {

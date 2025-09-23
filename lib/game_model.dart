@@ -63,10 +63,10 @@ class GameModel extends ZugModel {
     ));
   }
 
-  void newSeasonalGame({required Team team, required int slot}) {
+  Future<void> newSeasonalGame({required int slot}) async {
     areaCmd(ClientMsg.newArea,id: userName.toString(), data: {
-      ZugBallField.abbrev : team.abbrev,
-      ZugBallField.gameMode : "season",
+      ZugBallField.side : (await getSide()).name,
+      ZugBallField.seasonId : currentSeason?.id,
       ZugBallField.slot : slot
     });
   }
@@ -138,8 +138,10 @@ class GameModel extends ZugModel {
         playedGames.add(gameKey);
       }
     }
-    ZugDialogs.showClickableDialog(ScheduleViewPage(schedule: games,
-        teamMap: teamMap, userTeam: Team.sanFrancisco, playedGames: playedGames));
+    ZugDialogs.showClickableDialog(SeasonScheduleWidget(
+      model: this,
+      schedule: games,
+      teamMap: teamMap, playedGames: playedGames));
   }
 
   void toggleSeasonMode() {
