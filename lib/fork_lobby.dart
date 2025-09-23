@@ -1,4 +1,5 @@
 import 'package:forkball/game_model.dart';
+import 'package:forkball/schedule.dart';
 import 'package:forkball/seasons.dart';
 import 'package:zugclient/lobby_page.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +14,10 @@ class ForkLobby extends LobbyPage {
   @override
   List<CommandButtonData> getExtraCmdButtons(BuildContext context) {
     List<CommandButtonData> extras = super.getExtraCmdButtons(context);
-    extras.add(CommandButtonData("Seasons", Colors.purple, Icons.calendar_month, () => (model as GameModel).toggleSeasonMode()));
+    extras.add(CommandButtonData("Seasons", Colors.green, Icons.access_time_outlined,
+            () => (model as GameModel).setLobbyView(LobbyView.seasons)));
+    extras.add(CommandButtonData("Schedule", Colors.purple, Icons.calendar_month,
+            () => (model as GameModel).requestSchedule()));
     return extras;
   }
 
@@ -23,10 +27,27 @@ class ForkLobby extends LobbyPage {
   }
 
   @override
+  Widget? selectorWidget() {
+    GameModel gameModel = model as GameModel;
+    if (gameModel.fetchingData) return const SizedBox.shrink();
+    if (gameModel.lobbyView == LobbyView.lobby) return super.selectorWidget();
+    return ElevatedButton(onPressed: () => gameModel.setLobbyView(LobbyView.lobby), child: const Text("Return to Lobby"));
+  }
+
+  @override
   Widget selectedArea(BuildContext context, {Color? bkgCol, Color? txtCol, Iterable? occupants}) {
     GameModel gameModel = model as GameModel;
-    return gameModel.showSeasons ? SeasonWidget(gameModel) :
-      LayoutBuilder(builder: (BuildContext ctx, BoxConstraints bc) => Container(
+    if (gameModel.fetchingData) return const Text("Fetching data...");
+    return switch(gameModel.lobbyView) {
+      LobbyView.lobby => getMatchupWidget(),
+      LobbyView.seasons => SeasonWidget(gameModel),
+      LobbyView.schedule => SeasonScheduleWidget(model : gameModel),
+      LobbyView.standings => throw UnimplementedError(),
+    };
+  }
+
+  Widget getMatchupWidget() {
+    return LayoutBuilder(builder: (BuildContext ctx, BoxConstraints bc) => Container(
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [

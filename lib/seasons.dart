@@ -20,10 +20,6 @@ class SeasonWidgetState extends State<SeasonWidget> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ElevatedButton(
-                onPressed: () => widget.model.send(GameMsg.getSchedule, data:
-                { ZugBallField.seasonId : widget.model.currentSeason?.id}),
-                child: const Text("Get Schedule")),
             Text(
               'Seasons',
               style: Theme.of(context).textTheme.headlineSmall,
@@ -71,7 +67,6 @@ class SeasonWidgetState extends State<SeasonWidget> {
               ],
             ),
             const SizedBox(height: 8),
-
             ...widget.model.seasons.map((season) =>
                 Card(
                   elevation: 1,

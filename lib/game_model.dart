@@ -14,6 +14,7 @@ enum GameMsg { nextPitch, pitchResult, guessNotification, selectTeam, subPlayer,
 getSchedule,scheduleResponse,teamMap}
 enum GameOptions { gameMode }
 enum GameMode {exhibition,season}
+enum LobbyView {lobby,seasons,schedule,standings}
 
 class Season {
   int id;
@@ -24,10 +25,19 @@ class Season {
         name = json[ZugBallField.seasonName];
 }
 
+class Schedule {
+  final List<ScheduledGame> games;
+  final Set<String> playedGames;
+  const Schedule(this.games,this.playedGames);
+}
+
+//TODO: reduce redundant schedule requests
 class GameModel extends ZugModel {
 
-  bool showSeasons = false;
+  bool fetchingData = false;
+  LobbyView lobbyView = LobbyView.lobby;
   Season? currentSeason;
+  Schedule? currentSchedule;
   List<Season> seasons = [];
   Map<int, Team> teamMap = {};
 
@@ -138,14 +148,21 @@ class GameModel extends ZugModel {
         playedGames.add(gameKey);
       }
     }
-    ZugDialogs.showClickableDialog(SeasonScheduleWidget(
-      model: this,
-      schedule: games,
-      teamMap: teamMap, playedGames: playedGames));
+    currentSchedule = Schedule(games, playedGames);
+    lobbyView = LobbyView.schedule;
+    fetchingData = false;
+    notifyListeners();
   }
 
-  void toggleSeasonMode() {
-    showSeasons = !showSeasons;
+  void requestSchedule() {
+    send(GameMsg.getSchedule, data:
+    { ZugBallField.seasonId : currentSeason?.id });
+    fetchingData = true;
+    notifyListeners();
+  }
+
+  void setLobbyView(LobbyView view) {
+    lobbyView = view;
     notifyListeners();
   }
 

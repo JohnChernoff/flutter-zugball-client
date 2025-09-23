@@ -36,18 +36,12 @@ class ScheduledGame {
 
 class SeasonScheduleWidget extends StatefulWidget {
   final GameModel model;
-  final List<ScheduledGame> schedule;
-  final Map<int, Team> teamMap; // Map from database team ID to Team enum
   final Team? selectedTeam;
-  final Set<String> playedGames; // Set of "homeId vs awayId" strings
 
   const SeasonScheduleWidget({
     super.key,
     required this.model,
-    required this.schedule,
-    required this.teamMap,
     this.selectedTeam,
-    required this.playedGames,
   });
 
   @override
@@ -56,6 +50,7 @@ class SeasonScheduleWidget extends StatefulWidget {
 
 class _SeasonScheduleWidgetState extends State<SeasonScheduleWidget>
     with SingleTickerProviderStateMixin {
+
   late TabController _tabController;
   Team? _selectedTeamFilter;
 
@@ -73,14 +68,14 @@ class _SeasonScheduleWidgetState extends State<SeasonScheduleWidget>
   }
 
   Team? _getTeamById(int id) {
-    return widget.teamMap[id];
+    return widget.model.teamMap[id];
   }
 
   List<ScheduledGame> _getFilteredGames() {
-    List<ScheduledGame> games = widget.schedule;
+    List<ScheduledGame> games = widget.model.currentSchedule?.games ?? [];
 
     if (_selectedTeamFilter != null) {
-      int? selectedTeamId = widget.teamMap.entries
+      int? selectedTeamId = widget.model.teamMap.entries
           .where((entry) => entry.value == _selectedTeamFilter)
           .map((entry) => entry.key)
           .firstOrNull;
@@ -102,14 +97,17 @@ class _SeasonScheduleWidgetState extends State<SeasonScheduleWidget>
   }
 
   List<ScheduledGame> _getUpcomingGames() {
+    // Set of "homeId vs awayId" strings
+    Set<String> playedGames = widget.model.currentSchedule?.playedGames ?? {};
     return _getFilteredGames().where((game) =>
-    !widget.playedGames.contains('${game.homeTeamId}vs${game.awayTeamId}')
+    !playedGames.contains('${game.homeTeamId}vs${game.awayTeamId}')
     ).take(20).toList();
   }
 
   List<ScheduledGame> _getRecentGames() {
+    Set<String> playedGames = widget.model.currentSchedule?.playedGames ?? {};
     return _getFilteredGames().where((game) =>
-        widget.playedGames.contains('${game.homeTeamId}vs${game.awayTeamId}')
+        playedGames.contains('${game.homeTeamId}vs${game.awayTeamId}')
     ).toList().reversed.take(20).toList();
   }
 
@@ -139,7 +137,7 @@ class _SeasonScheduleWidgetState extends State<SeasonScheduleWidget>
                       value: null,
                       child: Text('All teams'),
                     ),
-                    ...widget.teamMap.values.map((team) => DropdownMenuItem<Team?>(
+                    ...widget.model.teamMap.values.map((team) => DropdownMenuItem<Team?>(
                       value: team,
                       child: Text('${team.city} ${team.name}'),
                     )),
@@ -207,12 +205,12 @@ class _SeasonScheduleWidgetState extends State<SeasonScheduleWidget>
 
   Widget _buildFullScheduleTab() {
     final allGames = _getFilteredGames();
-
+    Set<String> playedGames = widget.model.currentSchedule?.playedGames ?? {};
     return ListView.builder(
       itemCount: allGames.length,
       itemBuilder: (context, index) {
         final game = allGames[index];
-        final isPlayed = widget.playedGames.contains('${game.homeTeamId}vs${game.awayTeamId}');
+        final isPlayed = playedGames.contains('${game.homeTeamId}vs${game.awayTeamId}');
         return _buildGameTile(game, isPlayed);
       },
     );
