@@ -1,6 +1,7 @@
 import 'package:forkball/game_model.dart';
 import 'package:forkball/schedule.dart';
 import 'package:forkball/seasons.dart';
+import 'package:forkball/standings.dart';
 import 'package:zugclient/lobby_page.dart';
 import 'package:flutter/material.dart';
 import 'package:forkball/teams.dart';
@@ -18,6 +19,8 @@ class ForkLobby extends LobbyPage {
             () => (model as GameModel).setLobbyView(LobbyView.seasons)));
     extras.add(CommandButtonData("Schedule", Colors.purple, Icons.calendar_month,
             () => (model as GameModel).requestSchedule()));
+    extras.add(CommandButtonData("Standings", Colors.white, Icons.add_chart,
+            () => (model as GameModel).requestStandings()));
     return extras;
   }
 
@@ -42,7 +45,7 @@ class ForkLobby extends LobbyPage {
       LobbyView.lobby => getMatchupWidget(),
       LobbyView.seasons => SeasonWidget(gameModel),
       LobbyView.schedule => SeasonScheduleWidget(model : gameModel),
-      LobbyView.standings => throw UnimplementedError(),
+      LobbyView.standings => StandingsWidget(model: gameModel),
     };
   }
 

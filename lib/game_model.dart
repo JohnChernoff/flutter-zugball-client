@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart' show Icon, Icons;
 import 'package:forkball/schedule.dart';
+import 'package:forkball/standings.dart';
 import 'package:forkball/teams.dart';
 import 'package:zug_utils/zug_dialogs.dart';
 import 'package:zugclient/zug_app.dart';
@@ -10,8 +11,8 @@ import 'package:forkball/zugball_fields.dart';
 import 'package:zugclient/zug_option.dart';
 import 'game.dart';
 
-enum GameMsg { nextPitch, pitchResult, guessNotification, selectTeam, subPlayer, createSeason, switchSeason, listSeasons, getStandings,
-getSchedule,scheduleResponse,teamMap}
+enum GameMsg { nextPitch, pitchResult, guessNotification, selectTeam, subPlayer, createSeason, switchSeason, listSeasons,
+  getStandings, standingsResponse, getSchedule, scheduleResponse,teamMap}
 enum GameOptions { gameMode }
 enum GameMode {exhibition,season}
 enum LobbyView {lobby,seasons,schedule,standings}
@@ -40,6 +41,7 @@ class GameModel extends ZugModel {
   Schedule? currentSchedule;
   List<Season> seasons = [];
   Map<int, Team> teamMap = {};
+  SeasonStandings? currentStandings;
 
   Game get currentGame => currentArea as Game;
 
@@ -55,9 +57,10 @@ class GameModel extends ZugModel {
     addFunctions({
       GameMsg.pitchResult: handlePitch,
       GameMsg.guessNotification: handleGuessNotification,
+      GameMsg.teamMap : handleTeamMap,
       GameMsg.listSeasons : handleSeasonList,
       GameMsg.scheduleResponse : handleSchedule,
-      GameMsg.teamMap : handleTeamMap
+      GameMsg.standingsResponse : handleStandings
     });
     editOption(AudioOpt.music, true);
     checkRedirect("lichess.org");
@@ -151,7 +154,6 @@ class GameModel extends ZugModel {
     currentSchedule = Schedule(games, playedGames);
     lobbyView = LobbyView.schedule;
     fetchingData = false;
-    notifyListeners();
   }
 
   void requestSchedule() {
@@ -159,6 +161,22 @@ class GameModel extends ZugModel {
     { ZugBallField.seasonId : currentSeason?.id });
     fetchingData = true;
     notifyListeners();
+  }
+
+  void handleStandings(data) {
+    currentStandings = SeasonStandings.fromJson(data);
+    lobbyView = LobbyView.standings;
+    fetchingData = false;
+  }
+
+  void requestStandings() {
+    if (currentSeason != null) {
+      send(GameMsg.getStandings, data: {
+        ZugBallField.seasonId: currentSeason!.id
+      });
+      fetchingData = true;
+      notifyListeners();
+    }
   }
 
   void setLobbyView(LobbyView view) {

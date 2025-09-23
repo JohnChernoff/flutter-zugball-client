@@ -55,6 +55,10 @@ class ZugBallField {
       currentSeason = "currentSeason",
       seasons = "seasons",
       gameMode = "gameMode",
-      slot = "slot"
+      slot = "slot",
+      winPercentage = "winPercentage",
+      runsFor = "runsFor",
+      runsAgainst = "runsAgainst",
+      runDifferential = "runDifferential"
   ;
 }
