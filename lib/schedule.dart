@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:forkball/game_model.dart';
 import 'package:forkball/teams.dart';
+import 'package:forkball/zugball_fields.dart';
 
 // Data models matching your JSON structure
 class ScheduledGame {
@@ -8,8 +9,7 @@ class ScheduledGame {
   final int awayTeamId;
   final int seasonId;
   final int seasonSlot;
-  final int homeSlot;
-  final int awaySlot;
+  final int day;
   final bool isPlayed;
 
   ScheduledGame({
@@ -17,19 +17,17 @@ class ScheduledGame {
     required this.awayTeamId,
     required this.seasonId,
     required this.seasonSlot,
-    required this.homeSlot,
-    required this.awaySlot,
+    required this.day,
     this.isPlayed = false,
   });
 
   factory ScheduledGame.fromJson(Map<String, dynamic> json) {
     return ScheduledGame(
-      homeTeamId: json['homeTeamId'],
-      awayTeamId: json['awayTeamId'],
-      seasonId: json['seasonId'],
-      seasonSlot: json['seasonSlot'],
-      homeSlot: json['homeTeamGameNumber'],
-      awaySlot: json['awayTeamGameNumber'],
+      homeTeamId: json[ZugBallField.homeTeamId],
+      awayTeamId: json[ZugBallField.awayTeamId],
+      seasonId: json[ZugBallField.seasonId],
+      seasonSlot: json[ZugBallField.seasonSlot],
+      day: json[ZugBallField.day],
     );
   }
 }
@@ -86,7 +84,7 @@ class _SeasonScheduleWidgetState extends State<SeasonScheduleWidget>
             game.awayTeamId == selectedTeamId
         ).toList();
 
-        // Sort by global season slot (the shared number), then assign display numbers in order
+        // Sort by global season slot (the shared number), then assign display numbers in order (TODO: why not use day)
         games.sort((a, b) => a.seasonSlot.compareTo(b.seasonSlot));
       }
     } else {
@@ -228,18 +226,18 @@ class _SeasonScheduleWidgetState extends State<SeasonScheduleWidget>
         (homeTeam == _selectedTeamFilter || awayTeam == _selectedTeamFilter);
 
     // Calculate display game number based on position in filtered games
-    List<ScheduledGame> allFilteredGames = _getFilteredGames();
-    int displayGameNumber = allFilteredGames.indexOf(game) + 1;
+    //List<ScheduledGame> allFilteredGames = _getFilteredGames();
+    //int displayGameNumber = allFilteredGames.indexOf(game) + 1;
 
     return Card(
       // ... rest of the Card widget stays the same, but use displayGameNumber
       child: ListTile(
         leading: InkWell(
-            onTap: () => widget.model.newSeasonalGame(slot: game.seasonSlot),
+            onTap: () => widget.model.newSeasonalGame(game),
             child: CircleAvatar(
           backgroundColor: isUserTeamGame ? Colors.blue : Colors.grey[300],
           child: Text(
-            displayGameNumber.toString(),
+            game.day.toString(), //displayGameNumber.toString(),
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.bold,

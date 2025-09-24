@@ -76,11 +76,12 @@ class GameModel extends ZugModel {
     ));
   }
 
-  Future<void> newSeasonalGame({required int slot}) async {
+  Future<void> newSeasonalGame(ScheduledGame game) async {
     areaCmd(ClientMsg.newArea,id: userName.toString(), data: {
       ZugBallField.side : (await getSide()).name,
       ZugBallField.seasonId : currentSeason?.id,
-      ZugBallField.slot : slot
+      ZugBallField.seasonSlot : game.seasonSlot - 1, //TODO: why is this off by one?
+      ZugBallField.day : game.day
     });
   }
 
