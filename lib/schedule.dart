@@ -225,26 +225,23 @@ class _SeasonScheduleWidgetState extends State<SeasonScheduleWidget>
     final bool isUserTeamGame = _selectedTeamFilter != null &&
         (homeTeam == _selectedTeamFilter || awayTeam == _selectedTeamFilter);
 
-    // Calculate display game number based on position in filtered games
-    //List<ScheduledGame> allFilteredGames = _getFilteredGames();
-    //int displayGameNumber = allFilteredGames.indexOf(game) + 1;
-
     return Card(
-      // ... rest of the Card widget stays the same, but use displayGameNumber
       child: ListTile(
-        leading: InkWell(
-            onTap: () => widget.model.newSeasonalGame(game),
-            child: CircleAvatar(
-          backgroundColor: isUserTeamGame ? Colors.blue : Colors.grey[300],
-          child: Text(
-            game.day.toString(), //displayGameNumber.toString(),
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-              color: isUserTeamGame ? Colors.white : Colors.black87,
+        leading: SizedBox(width: 128, child: Row(children: [
+          ElevatedButton(onPressed:() => widget.model.newSeasonalGame(game),
+              child: const Text("Play")),
+          CircleAvatar(
+            backgroundColor: isUserTeamGame ? Colors.blue : Colors.grey[300],
+            child: Text(
+              game.day.toString(), //displayGameNumber.toString(),
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: isUserTeamGame ? Colors.white : Colors.black87,
+              ),
             ),
-          ),
-        )),
+          )
+        ])),
         title: Row(
           children: [
             // Away team logo

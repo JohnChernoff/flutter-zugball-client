@@ -12,7 +12,7 @@ import 'package:zugclient/zug_option.dart';
 import 'game.dart';
 
 enum GameMsg { nextPitch, pitchResult, guessNotification, selectTeam, subPlayer, createSeason, switchSeason, listSeasons,
-  getStandings, standingsResponse, getSchedule, scheduleResponse,teamMap}
+  getStandings, standingsResponse, getSchedule, scheduleResponse, teamMap, simulateSeason}
 enum GameOptions { gameMode }
 enum GameMode {exhibition,season}
 enum LobbyView {lobby,seasons,schedule,standings}
@@ -81,7 +81,7 @@ class GameModel extends ZugModel {
       ZugBallField.side : (await getSide()).name,
       ZugBallField.seasonId : currentSeason?.id,
       ZugBallField.seasonSlot : game.seasonSlot - 1, //TODO: why is this off by one?
-      ZugBallField.day : game.day
+      ZugBallField.day : game.day //starts at 1
     });
   }
 
