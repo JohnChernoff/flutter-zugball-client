@@ -325,14 +325,14 @@ class _StandingsWidgetState extends State<StandingsWidget>
               child: Row(
                 children: [
                   const SizedBox(width: 40), // Logo space
-                  const Expanded(flex: 3, child: Text('Team', style: TextStyle(fontWeight: FontWeight.bold))),
-                  const Expanded(flex: 1, child: Text('W', textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold))),
-                  const Expanded(flex: 1, child: Text('L', textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold))),
-                  const Expanded(flex: 1, child: Text('PCT', textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold))),
+                  Expanded(flex: 3, child: Text('Team', style: headerTxtStyle())),
+                  Expanded(flex: 1, child: Text('W', textAlign: TextAlign.center, style: headerTxtStyle())),
+                  Expanded(flex: 1, child: Text('L', textAlign: TextAlign.center, style: headerTxtStyle())),
+                  Expanded(flex: 1, child: Text('PCT', textAlign: TextAlign.center, style: headerTxtStyle())),
                   if (!isCompact) ...[
-                    const Expanded(flex: 1, child: Text('RF', textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold))),
-                    const Expanded(flex: 1, child: Text('RA', textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold))),
-                    const Expanded(flex: 1, child: Text('DIFF', textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold))),
+                    Expanded(flex: 1, child: Text('RF', textAlign: TextAlign.center, style: headerTxtStyle())),
+                    Expanded(flex: 1, child: Text('RA', textAlign: TextAlign.center, style: headerTxtStyle())),
+                    Expanded(flex: 1, child: Text('DIFF', textAlign: TextAlign.center, style: headerTxtStyle())),
                   ],
                 ],
               ),
@@ -348,6 +348,10 @@ class _StandingsWidgetState extends State<StandingsWidget>
         ),
       ),
     );
+  }
+
+  TextStyle headerTxtStyle() {
+    return const TextStyle(fontWeight: FontWeight.bold, color: Colors.black);
   }
 
   Widget _buildTeamRow(TeamStanding teamStanding, int rank, bool isCompact) {
