@@ -12,7 +12,7 @@ enum TeamDivision {
 }
 
 enum Team {
-  boston("Boston", "Beacons", "BOS", TeamDivision.alEast, Colors.blueGrey, Colors.black),
+  boston("Boston", "Beacons", "BOS", TeamDivision.alEast, Color.fromARGB(255, 108, 33, 108), Color.fromARGB(255, 222, 222, 222)), //Colors.blueGrey),
   newYork("New York", "Bagels", "NY", TeamDivision.alEast, Colors.green, Colors.white),
   baltimore("Baltimore", "Chopsticks", "BAL", TeamDivision.alEast, Colors.orange, Colors.white),
   philadelphia("Philadelphia", "Pretzels", "PHI", TeamDivision.nlEast, Colors.green, Colors.black),
@@ -39,7 +39,7 @@ enum Team {
   montreal("Montreal", "Mounties", "MON", TeamDivision.nlEast, Colors.red, Colors.green),
   nashville("Nashville", "Naturals", "NSH", TeamDivision.nlCentral, Colors.white, Colors.green),
   atlanta("Atlanta", "Turntables", "ATL", TeamDivision.nlEast, Colors.redAccent, Colors.greenAccent),
-  kansasCity("Kansas City", "Steakouts", "KC", TeamDivision.alCentral, Colors.grey, Colors.red),
+  kansasCity("Kansas City", "T-Bones", "KC", TeamDivision.alCentral, Colors.grey, Colors.red),
   oakland("Oakland", "Anchors", "OAK", TeamDivision.alWest, Color.fromARGB(255, 33, 12, 192), Colors.cyan),
   vancouver("Vancouver", "Orcas", "VAN", TeamDivision.alWest, Colors.blue, Colors.red);
 
