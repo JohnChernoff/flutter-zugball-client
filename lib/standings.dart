@@ -170,23 +170,20 @@ class _StandingsWidgetState extends State<StandingsWidget>
             padding: const EdgeInsets.all(20),
             child: Column(
               children: [
-                Row(children: [
-                  ElevatedButton(onPressed: () {
-                    Picker(
-                      adapter: NumberPickerAdapter(data: [
-                        const NumberPickerColumn(begin: 1, end: 162, jump: 1),
-                      ]),
-                      title: const Text('Select Day'),
-                      onConfirm: (Picker picker, List<int> value) {
-                        print('Selected: ${picker.getSelectedValues()}');
-                      },
-                    ).showDialog(context).then((onValue) =>
-                    widget.model.send(GameMsg.simulateSeason, data: {
-                      ZugBallField.seasonId : widget.model.currentSeason?.id,
-                      ZugBallField.day : onValue?.first
-                    }));
-                    }, child: const Text("Simulate")),
-                ]),
+                if (!widget.model.isGuest()) ElevatedButton(onPressed: () {
+                  Picker(
+                    adapter: NumberPickerAdapter(data: [
+                      const NumberPickerColumn(begin: 1, end: 162, jump: 1),
+                    ]),
+                    title: const Text('Select Day'),
+                    onConfirm: (Picker picker, List<int> value) {
+                      widget.model.send(GameMsg.simulateSeason, data: {
+                        ZugBallField.seasonId : widget.model.currentSeason?.id,
+                        ZugBallField.day : value.first
+                      });
+                    },
+                  ).showModal(context);
+                }, child: const Text("Simulate")),
                 Row(
                   children: [
                     const Icon(Icons.sports_baseball, color: Colors.white, size: 28),
@@ -361,7 +358,7 @@ class _StandingsWidgetState extends State<StandingsWidget>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: isFirstPlace ? Colors.green.shade900 : null,
+        //color: isFirstPlace ? Colors.green.shade900 : null,
         border: Border(
           bottom: BorderSide(color: Colors.grey.shade200),
         ),
@@ -377,7 +374,7 @@ class _StandingsWidgetState extends State<StandingsWidget>
                   width: 20,
                   height: 20,
                   decoration: BoxDecoration(
-                    color: isFirstPlace ? Colors.amber : Colors.grey.shade400,
+                    color: isFirstPlace ? Colors.amber : Colors.grey.shade700,
                     shape: BoxShape.circle,
                   ),
                   child: Center(
@@ -386,18 +383,13 @@ class _StandingsWidgetState extends State<StandingsWidget>
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
-                        color: isFirstPlace ? Colors.amber.shade800 : Colors.white,
+                        color: isFirstPlace ? Colors.black : Colors.white,
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
-                if (team != null)
-                  SizedBox(
-                    width: 12,
-                    height: 12,
-                    child: team.getImage(),
-                  ),
+                //const SizedBox(width: 8),
+                //if (team != null) SizedBox(width: 12, height: 12, child: team.getImage()),
               ],
             ),
           ),

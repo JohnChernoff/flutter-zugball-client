@@ -15,11 +15,13 @@ class ForkLobby extends LobbyPage {
   @override
   List<CommandButtonData> getExtraCmdButtons(BuildContext context) {
     List<CommandButtonData> extras = super.getExtraCmdButtons(context);
-    extras.add(CommandButtonData("Seasons", Colors.green, Icons.access_time_outlined,
-            () => (model as GameModel).setLobbyView(LobbyView.seasons)));
+    if (!model.isGuest()) {
+      extras.add(CommandButtonData("Seasons", Colors.green, Icons.access_time_outlined,
+              () => (model as GameModel).setLobbyView(LobbyView.seasons)));
+    }
     extras.add(CommandButtonData("Schedule", Colors.purple, Icons.calendar_month,
             () => (model as GameModel).requestSchedule()));
-    extras.add(CommandButtonData("Standings", Colors.white, Icons.add_chart,
+    extras.add(CommandButtonData("Standings", model.isGuest() ? Colors.green : Colors.cyan, Icons.add_chart,
             () => (model as GameModel).requestStandings()));
     return extras;
   }
@@ -44,7 +46,8 @@ class ForkLobby extends LobbyPage {
     return switch(gameModel.lobbyView) {
       LobbyView.lobby => getMatchupWidget(),
       LobbyView.seasons => SeasonWidget(gameModel),
-      LobbyView.schedule => SeasonScheduleWidget(model : gameModel),
+      LobbyView.schedule => SeasonScheduleWidget(model : gameModel,
+          selectedTeam: model.getOption(GameOptions.team)?.getEnum(Team.values) as Team),
       LobbyView.standings => StandingsWidget(model: gameModel),
     };
   }

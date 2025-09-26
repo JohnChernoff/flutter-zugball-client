@@ -3,7 +3,6 @@ import 'package:forkball/game_model.dart';
 import 'package:forkball/teams.dart';
 import 'package:forkball/zugball_fields.dart';
 
-// Data models matching your JSON structure
 class ScheduledGame {
   final int homeTeamId;
   final int awayTeamId;
@@ -214,6 +213,7 @@ class _SeasonScheduleWidgetState extends State<SeasonScheduleWidget>
     );
   }
 
+  //TODO: game scores
   Widget _buildGameTile(ScheduledGame game, bool isPlayed) {
     final homeTeam = _getTeamById(game.homeTeamId);
     final awayTeam = _getTeamById(game.awayTeamId);
@@ -228,7 +228,7 @@ class _SeasonScheduleWidgetState extends State<SeasonScheduleWidget>
     return Card(
       child: ListTile(
         leading: SizedBox(width: 128, child: Row(children: [
-          ElevatedButton(onPressed:() => widget.model.newSeasonalGame(game),
+          if (!isPlayed) ElevatedButton(onPressed:() => widget.model.newSeasonalGame(game),
               child: const Text("Play")),
           CircleAvatar(
             backgroundColor: isUserTeamGame ? Colors.blue : Colors.grey[300],
@@ -245,12 +245,7 @@ class _SeasonScheduleWidgetState extends State<SeasonScheduleWidget>
         title: Row(
           children: [
             // Away team logo
-            Container(
-              width: 24,
-              height: 24,
-              margin: const EdgeInsets.only(right: 8),
-              child: awayTeam.getImage(),
-            ),
+            //Container(width: 24, height: 24, margin: const EdgeInsets.only(right: 8), child: awayTeam.getImage()),
             Text(
               awayTeam.abbrev,
               style: TextStyle(
@@ -258,9 +253,9 @@ class _SeasonScheduleWidgetState extends State<SeasonScheduleWidget>
                 color: awayTeam == _selectedTeamFilter ? Colors.blue : null,
               ),
             ),
-            const Spacer(),
+            //const Spacer(),
             const Text(' @ '),
-            const Spacer(),
+            //const Spacer(),
             Text(
               homeTeam.abbrev,
               style: TextStyle(
@@ -269,12 +264,8 @@ class _SeasonScheduleWidgetState extends State<SeasonScheduleWidget>
               ),
             ),
             // Home team logo
-            Container(
-              width: 24,
-              height: 24,
-              margin: const EdgeInsets.only(left: 8),
-              child: homeTeam.getImage(),
-            ),
+            //Container(width: 24, height: 24, margin: const EdgeInsets.only(left: 8), child: homeTeam.getImage()),
+            //const Spacer(), Text(game.isPlayed)
           ],
         ),
         subtitle: Text(
@@ -291,9 +282,6 @@ class _SeasonScheduleWidgetState extends State<SeasonScheduleWidget>
   }
 }
 
-
-
-// Example of how to parse the JSON from your server
 class ScheduleParser {
   static List<ScheduledGame> parseScheduleFromJson(Map<String, dynamic> json) {
     final List<dynamic> gamesJson = json['games'] ?? [];

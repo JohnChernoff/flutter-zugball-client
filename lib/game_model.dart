@@ -13,7 +13,7 @@ import 'game.dart';
 
 enum GameMsg { nextPitch, pitchResult, guessNotification, selectTeam, subPlayer, createSeason, switchSeason, listSeasons,
   getStandings, standingsResponse, getSchedule, scheduleResponse, teamMap, simulateSeason}
-enum GameOptions { gameMode }
+enum GameOptions { team }
 enum GameMode {exhibition,season}
 enum LobbyView {lobby,seasons,schedule,standings}
 
@@ -32,7 +32,6 @@ class Schedule {
   const Schedule(this.games,this.playedGames);
 }
 
-//TODO: reduce redundant schedule requests
 class GameModel extends ZugModel {
 
   bool fetchingData = false;
@@ -51,9 +50,9 @@ class GameModel extends ZugModel {
       {super.firebaseOptions, super.localServer,super.showServMess,super.javalinServer}) {
     showServMess = true;
     modelName = "my_client";
-    registerEnum(GameMode.values);
-    setOptionFromEnum(GameOptions.gameMode, GameMode.exhibition.asOption(label: "Game Mode"));
-    //print ("Current mode: ${getOption(GameOptions.gameMode)}");
+    registerEnum(Team.values);
+    setOptionFromEnum(GameOptions.team, getOption(GameOptions.team) ??
+        Team.boston.asOption(label: "Favorite Team"));
     addFunctions({
       GameMsg.pitchResult: handlePitch,
       GameMsg.guessNotification: handleGuessNotification,
@@ -83,6 +82,8 @@ class GameModel extends ZugModel {
       ZugBallField.seasonSlot : game.seasonSlot - 1, //TODO: why is this off by one?
       ZugBallField.day : game.day //starts at 1
     });
+    lobbyView = LobbyView.lobby;
+    notifyListeners();
   }
 
   Future<Side> getSide() async {

@@ -12,7 +12,7 @@ enum TeamDivision {
 }
 
 enum Team {
-  boston("Boston", "Beacons", "BOS", TeamDivision.alEast, Colors.red, Colors.white),
+  boston("Boston", "Beacons", "BOS", TeamDivision.alEast, Colors.blueGrey, Colors.black),
   newYork("New York", "Bagels", "NY", TeamDivision.alEast, Colors.green, Colors.white),
   baltimore("Baltimore", "Chopsticks", "BAL", TeamDivision.alEast, Colors.orange, Colors.white),
   philadelphia("Philadelphia", "Pretzels", "PHI", TeamDivision.nlEast, Colors.green, Colors.black),
