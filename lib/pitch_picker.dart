@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:zugclient/phase_timer.dart';
 import 'package:zugclient/zug_area.dart';
@@ -30,8 +32,7 @@ class CombinedPitchWidget extends StatefulWidget {
 
 class _CombinedPitchWidgetState extends State<CombinedPitchWidget> with TickerProviderStateMixin {
   SwingType _selectedSwingType = lastSwingType;
-  late PhaseTimerController _ptc;
-
+  late PhaseTimerController _pitchTimerController;
   // Animation controllers for location selection
   double _px = .5, _py = .5;
   late AnimationController _crosshairController;
@@ -45,7 +46,7 @@ class _CombinedPitchWidgetState extends State<CombinedPitchWidget> with TickerPr
   void initState() {
     super.initState();
     setSwing(lastSwingType);
-    _ptc = PhaseTimerController(this);
+    _pitchTimerController = PhaseTimerController(this);
 
     _crosshairController = AnimationController(
       duration: const Duration(milliseconds: 300),
@@ -69,9 +70,10 @@ class _CombinedPitchWidgetState extends State<CombinedPitchWidget> with TickerPr
 
   @override
   void dispose() {
-    _ptc.disposeTimer();
+    _pitchTimerController.disposeTimer();
     _crosshairController.dispose();
     _ballController.dispose();
+    //stopWatchTimer.dispose();
     super.dispose();
   }
 
@@ -107,9 +109,20 @@ class _CombinedPitchWidgetState extends State<CombinedPitchWidget> with TickerPr
       context: context,
       builder: (BuildContext dialogContext) {
         SwingType selectedSwing = lastSwingType; // local dialog state
-
+        int millisRemaining = cg.phaseTimeRemaining();
+        Timer? countdownTimer;
         return StatefulBuilder(
           builder: (BuildContext context, void Function(void Function()) setDialogState) {
+            countdownTimer ??= Timer.periodic(const Duration(milliseconds: 100), (_) {
+                if (millisRemaining <= 0) {
+                  countdownTimer?.cancel();
+                  Navigator.of(dialogContext).pop(); // auto-close if time runs out
+                } else if (dialogContext.mounted) {
+                  setDialogState(() {
+                    millisRemaining = (millisRemaining - 100).clamp(0, cg.phaseTimeRemaining());
+                  });
+                }
+              });
             return Dialog(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               child: Container(
@@ -151,7 +164,7 @@ class _CombinedPitchWidgetState extends State<CombinedPitchWidget> with TickerPr
                         ],
                       ),
                     ),
-
+                    Text('Pitch clock: ${(millisRemaining / 1000).toStringAsFixed(1)}'),
                     // Swing type selector (batting only)
                     if (batting)
                       Container(
@@ -246,7 +259,6 @@ class _CombinedPitchWidgetState extends State<CombinedPitchWidget> with TickerPr
                         },
                       ),
                     ),
-
                     const SizedBox(height: 12),
                   ],
                 ),
@@ -281,8 +293,8 @@ class _CombinedPitchWidgetState extends State<CombinedPitchWidget> with TickerPr
   }
 
   Widget getTimer(Game cg) {
-    return _ptc.getPhaseTimerCircle(
-      size: 48,
+    return _pitchTimerController.getPhaseTimerCircle(
+      size: cg.phase == ZugBallPhase.selection ? 48 : 0,
       currArea: cg,
       progressColor: Colors.blue,
       backgroundColor: Colors.black,
@@ -394,7 +406,7 @@ class _CombinedPitchWidgetState extends State<CombinedPitchWidget> with TickerPr
             _crosshairController.forward();
 
             // Show pitch selection dialog after location is chosen
-            _showPitchSelectionDialog(context);
+            if (cg.phase == ZugBallPhase.selection) _showPitchSelectionDialog(context);
           },
           child: Container(
             decoration: BoxDecoration(

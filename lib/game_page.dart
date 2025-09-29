@@ -144,7 +144,7 @@ class _MainPageState extends State<GamePage> with TickerProviderStateMixin {
               _buildPitchInfoCard(cg, theme, 108),
               const SizedBox(height: 16),
               Expanded(
-                child: GuessResultOverlay(game: cg, child: Card(
+                child: Card(
                   elevation: 8,
                   color: const Color(0xFF1B263B),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -159,7 +159,7 @@ class _MainPageState extends State<GamePage> with TickerProviderStateMixin {
                       }
                     ),
                   ),
-                )),
+                ),
               ]),
           ),
         const SizedBox(width: 16),
@@ -172,7 +172,7 @@ class _MainPageState extends State<GamePage> with TickerProviderStateMixin {
         // Right panel - Chat
         Expanded(
           flex: bc.maxWidth > 1480 ? 3 : 2,
-          child: Card(
+          child:  GuessResultOverlay(game: cg, child: Card(
             elevation: 8,
             color: const Color(0xFF1B263B),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -181,7 +181,7 @@ class _MainPageState extends State<GamePage> with TickerProviderStateMixin {
               child: ZugChat(widget.model),
             ),
           ),
-        ),
+        )),
       ],
     ));
   }
