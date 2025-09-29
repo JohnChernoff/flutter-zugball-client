@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:forkball/game_overlay.dart';
+import 'package:forkball/pitch_picker.dart';
+import 'package:universal_html/js_util.dart';
+import 'package:zugclient/zug_area.dart';
 import 'package:zugclient/zug_chat.dart';
 import 'package:zugclient/zug_fields.dart';
 import 'package:forkball/game_banner.dart';
@@ -133,70 +136,49 @@ class _MainPageState extends State<GamePage> with TickerProviderStateMixin {
     return LayoutBuilder(builder: (BuildContext ctx, BoxConstraints bc) => Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Left panel - Pitch location and info
+        // Left panel - Pitch info, lineup
         Expanded(
           flex: 2,
           child: Column(
             children: [
-              _buildPitchInfoCard(cg, theme),
+              _buildPitchInfoCard(cg, theme, 108),
               const SizedBox(height: 16),
               Expanded(
-                child:  GuessResultOverlay(game: cg, child: Card(
+                child: GuessResultOverlay(game: cg, child: Card(
                   elevation: 8,
                   color: const Color(0xFF1B263B),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (bc.maxHeight > 580) Text(
-                          "PITCH LOCATION",
-                          style: theme.textTheme.labelMedium?.copyWith(
-                            color: Colors.white70,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1.2,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        Expanded(
-                          child: AspectRatio(
-                            aspectRatio: cg.zoneWidth / cg.zoneHeight,
-                            child:PitchLocationWidget(widget.model),
-                          ),
-                        ),
-                      ],
+                    child: switch(cg.phase != ZugPhase.undefined ? cg.phase as ZugBallPhase : ZugBallPhase.pregame) {
+                      ZugBallPhase.pregame => const Center(child: Text("Game Not Yet Started")),
+                      ZugBallPhase.selection => BattingLineupWidget(game: cg, maxHeight: bc.maxHeight - 240),
+                      ZugBallPhase.result => StylishResultsWidget(cg),
+                      ZugBallPhase.postgame => const Center(child: Text("Game Over")),
+                      ZugBallPhase.delay => const SizedBox.shrink(),
+                      }
                     ),
                   ),
                 )),
-              ),
-            ],
+              ]),
           ),
-        ),
         const SizedBox(width: 16),
         // Middle panel - Pitch selection/result
         Expanded(
-          flex: 2,
-          child: switch(cg.phase as ZugBallPhase) {
-            ZugBallPhase.pregame => const Center(child: Text("Game Not Yet Started")),
-            ZugBallPhase.selection => PitchSelectionWidget(widget.model,
-                squashedWidth: bc.maxWidth < 1080, squashedHeight: bc.maxHeight < 480),
-            ZugBallPhase.result => StylishResultsWidget(cg),
-            ZugBallPhase.postgame => const Center(child: Text("Game Over")),
-            ZugBallPhase.delay => const SizedBox.shrink(),
-          }
+          flex: bc.maxWidth > 1480 ? 1 : 2,
+          child: CombinedPitchWidget(widget.model),
         ),
         const SizedBox(width: 16),
         // Right panel - Chat
         Expanded(
-          flex: 3,
+          flex: bc.maxWidth > 1480 ? 3 : 2,
           child: Card(
             elevation: 8,
             color: const Color(0xFF1B263B),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(16),
-              child: showChat ? ZugChat(widget.model) : BattingLineupWidget(game: cg, maxHeight: bc.maxHeight - 76),
+              child: ZugChat(widget.model),
             ),
           ),
         ),
@@ -217,13 +199,14 @@ class _MainPageState extends State<GamePage> with TickerProviderStateMixin {
     ));
   }
 
-  Widget _buildPitchInfoCard(Game cg, ThemeData theme) {
+  Widget _buildPitchInfoCard(Game cg, ThemeData theme, double height) {
     return Card(
       elevation: 8,
       color: const Color(0xFF1B263B),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Container(
         width: double.infinity,
+        height: height,
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
