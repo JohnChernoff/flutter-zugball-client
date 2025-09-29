@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:forkball/game_overlay.dart';
+import 'package:forkball/matchup_widget.dart';
 import 'package:forkball/pitch_picker.dart';
-import 'package:universal_html/js_util.dart';
 import 'package:zugclient/zug_area.dart';
 import 'package:zugclient/zug_chat.dart';
 import 'package:zugclient/zug_fields.dart';
 import 'package:forkball/game_banner.dart';
 import 'package:forkball/lineup.dart';
-import 'package:forkball/pitch_location.dart';
 import 'package:forkball/pitch_result.dart';
-import 'package:forkball/pitch_selection.dart';
 import 'package:forkball/zugball_fields.dart';
 import 'ballpark.dart';
 import 'game.dart';
@@ -124,7 +122,7 @@ class _MainPageState extends State<GamePage> with TickerProviderStateMixin {
             const SizedBox(width: 16),
             Expanded(
               flex: 2,
-              child: BattingLineupWidget(game: cg), //_buildBatterStats(cg, theme),
+              child: MatchupWidget(widget.model)
             ),
           ],
         ),
