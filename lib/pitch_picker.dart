@@ -41,6 +41,7 @@ class _CombinedPitchWidgetState extends State<CombinedPitchWidget> with TickerPr
   late Animation<double> _ballScaleAnimation;
   late Animation<double> _ballGlowAnimation;
   String? _lastPitchKey;
+  bool batting = false;
 
   @override
   void initState() {
@@ -90,9 +91,6 @@ class _CombinedPitchWidgetState extends State<CombinedPitchWidget> with TickerPr
 
   void _showPitchSelectionDialog(BuildContext context) async {
     Game cg = widget.model.currentGame;
-    UniqueName homeMgr = UniqueName.fromData(cg.upData[ZugBallField.homeTeam]?[ZugBallField.manager]);
-    bool userHomeTeam = (homeMgr.eq(widget.model.userName));
-    bool batting = cg.upData[ZugBallField.inningHalf] == "bottom" && userHomeTeam;
 
     List<dynamic> pList = cg.upData[ZugBallField.pitching]?[ZugBallField.pitchList] ?? [];
     Set<String> uniquePitchTypes = {};
@@ -303,7 +301,7 @@ class _CombinedPitchWidgetState extends State<CombinedPitchWidget> with TickerPr
     );
   }
 
-  Widget getSideIndicator(bool batting, ThemeData theme) {
+  Widget getSideIndicator(ThemeData theme) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
@@ -329,7 +327,7 @@ class _CombinedPitchWidgetState extends State<CombinedPitchWidget> with TickerPr
     Game cg = widget.model.currentGame;
     UniqueName homeMgr = UniqueName.fromData(cg.upData[ZugBallField.homeTeam]?[ZugBallField.manager]);
     bool userHomeTeam = (homeMgr.eq(widget.model.userName));
-    bool batting = cg.upData[ZugBallField.inningHalf] == "bottom" && userHomeTeam;
+    batting = cg.upData[ZugBallField.inningHalf] == (userHomeTeam ? "bottom" : "top");
 
     _checkForNewPitch(cg);
 
@@ -347,11 +345,11 @@ class _CombinedPitchWidgetState extends State<CombinedPitchWidget> with TickerPr
             SizedBox(
               height: 60,
               child: widget.squashedWidth
-                  ? Center(child: getSideIndicator(batting, theme))
+                  ? Center(child: getSideIndicator(theme))
                   : Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  getSideIndicator(batting,theme),
+                  getSideIndicator(theme),
                   getTimer(cg),
                 ],
               ),
