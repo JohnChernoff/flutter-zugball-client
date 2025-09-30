@@ -94,10 +94,10 @@ class GameModel extends ZugModel {
 
   @override
   void joinArea(String id) {
-    getSide().then((home) {
+    getSide().then((side) {
       areaCmd(ClientMsg.joinArea,data: {
         id: id,
-        ZugBallField.homeTeam : home
+        ZugBallField.side : side.name
       });
     });
   }
