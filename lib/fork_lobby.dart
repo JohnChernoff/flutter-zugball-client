@@ -5,9 +5,6 @@ import 'package:forkball/standings.dart';
 import 'package:zugclient/lobby_page.dart';
 import 'package:flutter/material.dart';
 import 'package:forkball/teams.dart';
-import 'package:forkball/zugball_fields.dart';
-import 'package:zugclient/zug_area.dart';
-
 import 'matchup_widget.dart';
 
 class ForkLobby extends LobbyPage {

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:zugclient/phase_timer.dart';
 import 'package:zugclient/zug_area.dart';
 import 'package:forkball/zugball_fields.dart';
+import 'package:zugclient/zug_user.dart';
 import 'game.dart';
 import 'game_model.dart';
 

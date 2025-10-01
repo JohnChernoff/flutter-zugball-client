@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:forkball/game_model.dart';
 import 'package:forkball/teams.dart';
 import 'package:forkball/zugball_fields.dart';
-import 'package:zugclient/zug_area.dart';
+import 'package:zugclient/zug_user.dart';
 
 //TODO: squashedWidth
 class MatchupWidget extends StatelessWidget {
@@ -366,6 +366,7 @@ class MatchupWidget extends StatelessWidget {
       child:
       Container(
           width: double.infinity,
+          //height: 128,
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: Colors.black.withOpacity(0.7),
@@ -383,7 +384,8 @@ class MatchupWidget extends StatelessWidget {
             ],
           ),
           child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-            getHomeAwayBadge(isHome, headerFontSize), Column(
+            getHomeAwayBadge(isHome, headerFontSize),
+            Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Row(
@@ -407,20 +409,7 @@ class MatchupWidget extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 4),
-                Flexible(
-                  child: Text(
-                    mgrName.toString(),
-                    style: TextStyle(
-                      fontSize: headerFontSize * 0.9,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white70,
-                      letterSpacing: 1,
-                    ),
-                    textAlign: TextAlign.center,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
+                Flexible(child: UserWidget(uName: mgrName, height: 48,)), //, colorBlendMode: BlendMode.colorBurn)),
               ],
             )],
           )),

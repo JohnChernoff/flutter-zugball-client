@@ -41,6 +41,22 @@ class GameApp extends ZugApp {
   @override
   Widget createMainPage(model) => GamePage(model as GameModel);
 
+  @override
+  NavigationDestination getMainNavigationBarItem() {
+    return const NavigationDestination(
+      icon: Icon(Icons.sports_baseball),
+      label: 'Ballgame',
+    );
+  }
+
+  @override
+  NavigationDestination getLobbyNavigationBarItem() {
+    return const NavigationDestination(
+      icon: Icon(Icons.group),
+      label: 'Lobby',
+    );
+  }
+
 }
 
 
