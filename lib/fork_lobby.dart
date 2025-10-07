@@ -1,3 +1,4 @@
+import 'package:forkball/game_graph.dart';
 import 'package:forkball/game_model.dart';
 import 'package:forkball/schedule.dart';
 import 'package:forkball/seasons.dart';
@@ -22,6 +23,7 @@ class ForkLobby extends LobbyPage {
             () => (model as GameModel).requestSchedule()));
     extras.add(CommandButtonData("Standings", model.isGuest() ? Colors.green : Colors.cyan, Icons.add_chart,
             () => (model as GameModel).requestStandings()));
+    extras.add(CommandButtonData("Random Game", Colors.redAccent, Icons.auto_graph, () => (model as GameModel).send(GameMsg.gameLog)));
     return extras;
   }
 
@@ -48,6 +50,7 @@ class ForkLobby extends LobbyPage {
       LobbyView.schedule => SeasonScheduleWidget(model : gameModel,
           selectedTeam: model.getOption(GameOptions.team)?.getEnum(Team.values) as Team),
       LobbyView.standings => StandingsWidget(model: gameModel),
+      LobbyView.gameGraph => GameEventVisualizer(events: gameModel.gameLog),
     };
   }
 

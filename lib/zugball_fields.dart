@@ -12,6 +12,7 @@ class ZugBallField {
       walks = "walks",
       errors = "errors",
       outs = "outs",
+      prevOuts = "prevOuts",
       inning = "inning",
       balls = "balls",
       strikes = "strikes",
@@ -62,6 +63,11 @@ class ZugBallField {
       homeTeamId = "homeTeamId",
       awayTeamId = "awayTeamId",
       seasonSlot = "seasonSlot",
-      day = "day"
+      day = "day",
+      playResult = "playResult",
+      pitchResult = "pitchResult",
+      gameLog = "gameLog",
+      batter = "batter",
+      pitcher = "pitcher"
   ;
 }

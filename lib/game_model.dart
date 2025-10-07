@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart' show Icon, Icons;
+import 'package:forkball/play_result.dart';
 import 'package:forkball/schedule.dart';
 import 'package:forkball/standings.dart';
 import 'package:forkball/teams.dart';
@@ -12,10 +13,10 @@ import 'package:zugclient/zug_option.dart';
 import 'game.dart';
 
 enum GameMsg { nextPitch, pitchResult, guessNotification, selectTeam, subPlayer, createSeason, switchSeason, listSeasons,
-  getStandings, standingsResponse, getSchedule, scheduleResponse, teamMap, simulateSeason}
+  getStandings, standingsResponse, getSchedule, scheduleResponse, teamMap, simulateSeason, gameEvent, gameLog}
 enum GameOptions { team }
 enum GameMode {exhibition,season}
-enum LobbyView {lobby,seasons,schedule,standings}
+enum LobbyView {lobby,seasons,schedule,standings,gameGraph}
 
 class Season {
   int id;
@@ -32,6 +33,16 @@ class Schedule {
   const Schedule(this.games,this.playedGames);
 }
 
+class GameEvent {
+  final PlayResult result;
+  String hitter, pitcher, onFirst, onSecond, onThird, inningHalf;
+  int balls, strikes, inning, prevOuts, outs, runs, homeScore, awayScore;
+  GameEvent(this.result,this.balls,this.strikes,this.inning, this.inningHalf,
+      this.hitter,this.pitcher,this.onFirst,this.onSecond,this.onThird,
+      this.prevOuts,this.outs,this.runs,this.homeScore,this.awayScore);
+}
+
+
 class GameModel extends ZugModel {
 
   bool fetchingData = false;
@@ -41,6 +52,7 @@ class GameModel extends ZugModel {
   List<Season> seasons = [];
   Map<int, Team> teamMap = {};
   SeasonStandings? currentStandings;
+  List<GameEvent> gameLog = [];
 
   Game get currentGame => currentArea as Game;
 
@@ -49,7 +61,7 @@ class GameModel extends ZugModel {
   GameModel(super.domain, super.port, super.remoteEndpoint, super.prefs,
       {super.firebaseOptions, super.localServer,super.showServMess,super.javalinServer}) {
     showServMess = true;
-    modelName = "my_client";
+    modelName = "ForkBallClient";
     registerEnum(Team.values);
     setOptionFromEnum(GameOptions.team, getOption(GameOptions.team) ??
         Team.boston.asOption(label: "Favorite Team"));
@@ -59,7 +71,8 @@ class GameModel extends ZugModel {
       GameMsg.teamMap : handleTeamMap,
       GameMsg.listSeasons : handleSeasonList,
       GameMsg.scheduleResponse : handleSchedule,
-      GameMsg.standingsResponse : handleStandings
+      GameMsg.standingsResponse : handleStandings,
+      GameMsg.gameLog : handleGamelog //handleGameLog
     });
     editOption(AudioOpt.music, true);
     checkRedirect("lichess.org");
@@ -127,6 +140,30 @@ class GameModel extends ZugModel {
   void handleGuessNotification(data) {
     currentGame.setGuessResult(data[ZugBallField.pitch] ?? false,
         data[ZugBallField.location] ?? false);
+  }
+
+  void handleGamelog(data) {
+    gameLog.clear();
+    for (dynamic logData in data as List<dynamic>) {
+      gameLog.add(GameEvent(
+          PlayResult.values.firstWhere((r) => r.name == logData[ZugBallField.playResult]),
+          logData[ZugBallField.balls],
+          logData[ZugBallField.strikes],
+          logData[ZugBallField.inning],
+          logData[ZugBallField.inningHalf],
+          logData[ZugBallField.batter],
+          logData[ZugBallField.pitcher],
+          logData[ZugBallField.bases]?[ZugBallField.firstBase],
+          logData[ZugBallField.bases]?[ZugBallField.secondBase],
+          logData[ZugBallField.bases]?[ZugBallField.thirdBase],
+          logData[ZugBallField.prevOuts],
+          logData[ZugBallField.outs],
+          logData[ZugBallField.runs],
+          logData[ZugBallField.home],
+          logData[ZugBallField.away],
+          ));
+    }
+    setLobbyView(LobbyView.gameGraph);
   }
 
   void handleSeasonList(data) {
