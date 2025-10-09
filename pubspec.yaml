@@ -36,7 +36,8 @@ dependencies:
     #git: "https://github.com/JohnChernoff/zugclient"
   zug_utils:
     git: "https://github.com/JohnChernoff/zug_utils"
-
+  zug_music:
+    path: "C:/Users/jac107/IdeaProjects/flutter/zug_music"
   logging: ^1.2.0
   universal_html: ^2.2.4
 
