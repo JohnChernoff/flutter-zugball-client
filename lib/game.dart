@@ -4,6 +4,45 @@ import 'package:zugclient/zug_area.dart';
 
 enum ZugBallPhase {pregame,selection,result,postgame,delay}
 enum Side {home,away}
+enum InningHalf {top,bottom}
+
+class Count {
+  int balls, strikes, pitches;
+  bool _fin = false;
+  Count(this.balls, this.strikes, {this.pitches = 0});
+
+  bool ball() {
+    if (!finished()) {
+      pitches++;
+      if (++balls > 3) {
+        _fin = true;
+      } return _fin;
+    } return false;
+  }
+
+  bool strike() {
+    if (!finished()) {
+      pitches++;
+      if (++strikes > 2) {
+        _fin = true;
+      } return _fin;
+    } return false;
+  }
+
+  bool finished() => _fin;
+
+  bool eq(Count count) => balls == count.balls && strikes == count.strikes;
+}
+
+class Bases {
+  bool first,second,third;
+  Bases(this.first,this.second,this.third);
+  bool eq(Bases bases) => first == bases.first && second == bases.second && third == bases.third;
+  @override
+  String toString() {
+    return "${(first ? 'x' : '-')} ${(second ? 'x' : '-')} ${(third ? 'x' : '-')} ";
+  }
+}
 
 class Guess {
   bool guessedPitch, guessedLocation;
@@ -79,6 +118,11 @@ class Game extends Area {
     lastPitchLocation = Offset(data[ZugBallField.locX], zoneHeight - data[ZugBallField.locY]);
     lastPitch = data[ZugBallField.pitchType];
     lastPitchSpeed = (data[ZugBallField.speed] as double).toStringAsFixed(2);
+  }
+
+  static Side getBattingSide({String? inningHalf, InningHalf inningHalfEnum = InningHalf.top}) {
+    if (inningHalf != null) return inningHalf == ZugBallField.topHalf ? Side.away : Side.home;
+    return inningHalfEnum == InningHalf.top ? Side.away : Side.home;
   }
 
   @override

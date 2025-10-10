@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart' show Icon, Icons;
+import 'package:forkball/game_sonifier.dart';
 import 'package:forkball/play_result.dart';
 import 'package:forkball/schedule.dart';
 import 'package:forkball/standings.dart';
 import 'package:forkball/teams.dart';
-import 'package:zug_music/zug_midi.dart';
-import 'package:zug_music/zug_music.dart';
 import 'package:zug_utils/zug_dialogs.dart';
 import 'package:zugclient/zug_app.dart';
 import 'package:zugclient/zug_area.dart';
@@ -39,10 +38,12 @@ class GameEvent {
   final PlayResult result;
   String hitter, pitcher, onFirst, onSecond, onThird, inningHalf;
   int balls, strikes, inning, prevOuts, outs, runs, homeScore, awayScore;
+  bool guessedPitch, guessedLocation;
 
   GameEvent(this.result,this.balls,this.strikes,this.inning, this.inningHalf,
       this.hitter,this.pitcher,this.onFirst,this.onSecond,this.onThird,
-      this.prevOuts,this.outs,this.runs,this.homeScore,this.awayScore);
+      this.prevOuts,this.outs,this.runs,this.homeScore,this.awayScore,
+      this.guessedPitch,this.guessedLocation);
 }
 
 
@@ -56,8 +57,7 @@ class GameModel extends ZugModel {
   Map<int, Team> teamMap = {};
   SeasonStandings? currentStandings;
   List<GameEvent> gameLog = [];
-  MidiManager midiMgr = MidiManager();
-  double tempo = .5;
+  GameSonifier sonifier = GameSonifier();
 
   Game get currentGame => currentArea as Game;
 
@@ -81,14 +81,6 @@ class GameModel extends ZugModel {
     });
     editOption(AudioOpt.music, true);
     checkRedirect("lichess.org");
-
-    midiMgr.audioReady = true;
-    midiMgr.muted = false;
-    List<MidiAssignment> ensemble = midiMgr.randomEnsemble(List<MidiPerformer>.of(["V1","V2"]));
-    midiMgr.load(ensemble).then((v) {
-      ZugModel.log.info("*** Loaded Audio ***"); //midiMgr.playNote(ensemble.first.instrument, 0, 72, 255, .5);
-    });
-
   }
 
   void newExhibitionGame() {
@@ -176,61 +168,12 @@ class GameModel extends ZugModel {
           logData[ZugBallField.runs],
           logData[ZugBallField.home],
           logData[ZugBallField.away],
+          logData[ZugBallField.guessedPitch],
+          logData[ZugBallField.guessedLocation],
           ));
     }
     setLobbyView(LobbyView.gameGraph);
-    playGameLog();
-  }
-
-  void playGameLog({meanRev = false}) {
-    ZugKey key = const ZugKey(ZugNote.noteA, Scale.majorScale);
-    ZugPitch p = ZugPitch(60);
-
-    List<ZugKey> prog = [
-      const ZugKey(ZugNote.noteA, Scale.majorScale),
-      const ZugKey(ZugNote.noteC, Scale.harmonicMinorScale),
-      const ZugKey(ZugNote.noteF, Scale.mixolydianScale),
-      const ZugKey(ZugNote.noteA, Scale.majorScale),
-    ];
-    int chord = 0;
-    const int minPitch = 24;
-    const int maxPitch = 108;
-    const int centerPitch = 60;
-    String inningHalf = ZugBallField.topHalf;
-    double t = 0;
-    for (GameEvent e in gameLog) {
-      if (e.inningHalf != inningHalf) {
-        if (++chord >= prog.length) chord = 0;
-        //key = prog.elementAt(chord);
-        key = ZugKey(getRandomNote(), getRandomScale());
-        print("Side Change, new key: $key");
-      }
-      print("Playing: ${e.result.positivity}, current pitch: ${p.pitch}, current note: ${p.note} ");
-      midiMgr.playNote(midiMgr.orchMap["V1"], t, p.pitch, 1, .25);
-      t += (.25 * tempo);
-
-      int steps = e.result.positivity;
-      if (meanRev) {
-        int distanceFromCenter = p.pitch - centerPitch;
-        if (distanceFromCenter.abs() > 32) { // 3/4 octave
-          if ((distanceFromCenter > 0 && steps > 0) || (distanceFromCenter < 0 && steps < 0)) {
-            steps = -steps; // Reverse direction
-          }
-        }
-      }
-
-      // Try the move
-      ZugPitch testPitch = e.result.endAtBat ? key.getNextPitch(p, steps) : ZugPitch(p.pitch + steps);
-
-      // Hard limit: if it goes out of bounds, reverse
-      if (testPitch.pitch > maxPitch || testPitch.pitch < minPitch) {
-        steps = -steps.abs(); // Force downward if too high
-        if (testPitch.pitch < minPitch) steps = steps.abs(); // Force upward if too low
-      }
-
-      p = key.getNextPitch(p, steps);
-      inningHalf = e.inningHalf;
-    }
+    sonifier.sonifyGameLog(gameLog);
   }
 
   void handleSeasonList(data) {

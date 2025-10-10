@@ -68,6 +68,8 @@ class ZugBallField {
       pitchResult = "pitchResult",
       gameLog = "gameLog",
       batter = "batter",
-      pitcher = "pitcher"
+      pitcher = "pitcher",
+      guessedPitch = "guessedPitch",
+      guessedLocation = "guessedLocation"
   ;
 }
