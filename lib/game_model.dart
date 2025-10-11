@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart' show Icon, Icons;
 import 'package:forkball/game_sonifier.dart';
 import 'package:forkball/play_result.dart';
@@ -12,12 +14,14 @@ import 'package:zugclient/zug_model.dart';
 import 'package:forkball/zugball_fields.dart';
 import 'package:zugclient/zug_option.dart';
 import 'game.dart';
+import 'game_event.dart';
+import 'momentum_game_sonifier.dart';
 
 enum GameMsg { nextPitch, pitchResult, guessNotification, selectTeam, subPlayer, createSeason, switchSeason, listSeasons,
   getStandings, standingsResponse, getSchedule, scheduleResponse, teamMap, simulateSeason, gameEvent, gameLog}
 enum GameOptions { team }
 enum GameMode {exhibition,season}
-enum LobbyView {lobby,seasons,schedule,standings,gameGraph}
+enum LobbyView {lobby,seasons,schedule,standings,gameGraph,gameVisualizer}
 
 class Season {
   int id;
@@ -34,16 +38,11 @@ class Schedule {
   const Schedule(this.games,this.playedGames);
 }
 
-class GameEvent {
-  final PlayResult result;
-  String hitter, pitcher, onFirst, onSecond, onThird, inningHalf;
-  int balls, strikes, inning, prevOuts, outs, runs, homeScore, awayScore;
-  bool guessedPitch, guessedLocation;
-
-  GameEvent(this.result,this.balls,this.strikes,this.inning, this.inningHalf,
-      this.hitter,this.pitcher,this.onFirst,this.onSecond,this.onThird,
-      this.prevOuts,this.outs,this.runs,this.homeScore,this.awayScore,
-      this.guessedPitch,this.guessedLocation);
+class GameLog {
+  final List<GameEvent> log;
+  final String homeTeam, awayTeam;
+  final DateTime date;
+  const GameLog(this.log,this.homeTeam,this.awayTeam,this.date);
 }
 
 
@@ -56,8 +55,11 @@ class GameModel extends ZugModel {
   List<Season> seasons = [];
   Map<int, Team> teamMap = {};
   SeasonStandings? currentStandings;
-  List<GameEvent> gameLog = [];
+  GameLog? gameLog;
   GameSonifier sonifier = GameSonifier();
+  bool sonificationPlaying = false;
+  int sonificationIndex = 0;
+  Timer? _sonificationTimer;
 
   Game get currentGame => currentArea as Game;
 
@@ -148,11 +150,11 @@ class GameModel extends ZugModel {
   }
 
   void handleGamelog(data) {
-    gameLog.clear();
+    List<GameEvent> log = [];
     for (dynamic logData in data as List<dynamic>) {
       PlayResult result = PlayResult.values
           .firstWhere((r) => r.name == logData[ZugBallField.playResult]);
-      gameLog.add(GameEvent(
+      log.add(GameEvent(
           result,
           logData[ZugBallField.balls],
           logData[ZugBallField.strikes],
@@ -172,8 +174,65 @@ class GameModel extends ZugModel {
           logData[ZugBallField.guessedLocation],
           ));
     }
-    setLobbyView(LobbyView.gameGraph);
-    sonifier.sonifyGameLog(gameLog);
+    gameLog = GameLog(log, "Home", "Away", DateTime.now());
+    setLobbyView(LobbyView.gameVisualizer);
+  }
+
+
+  /// Toggle playback state and trigger sonification
+  void toggleSonificationPlayback() {
+    sonificationPlaying = !sonificationPlaying;
+    if (sonificationPlaying) {
+      _startSonificationPlayback();
+    } else {
+      _stopSonificationPlayback();
+    }
+    notifyListeners();
+  }
+
+  int getLogLength() => gameLog?.log.length ?? 0;
+
+  /// Seek to a specific event index
+  void seekSonification(int index) {
+    _stopSonificationPlayback();
+    sonificationIndex = index.clamp(0, getLogLength() - 1);
+    notifyListeners();
+  }
+
+  /// Start playback animation with timer updates
+  void _startSonificationPlayback() {
+    // Start the full sonification audio
+    if (gameLog != null) MomentumGameSonifier().sonifyGameLog(gameLog!);
+
+    // Animate the index through the events
+    _sonificationTimer = Timer.periodic(Duration(milliseconds: 250), (timer) {
+      // Check if still playing (in case pause was called)
+      if (!sonificationPlaying) {
+        timer.cancel();
+        return;
+      }
+
+      if (sonificationIndex < getLogLength() - 1) {
+        sonificationIndex++;
+        notifyListeners();
+      } else {
+        // Reached end of game log
+        _stopSonificationPlayback();
+        sonificationPlaying = false;
+        notifyListeners();
+      }
+    });
+  }
+
+  void _stopSonificationPlayback() {
+    _sonificationTimer?.cancel();
+    _sonificationTimer = null;
+  }
+
+  @override
+  void dispose() {
+    _stopSonificationPlayback();
+    super.dispose();
   }
 
   void handleSeasonList(data) {

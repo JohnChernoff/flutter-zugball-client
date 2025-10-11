@@ -1,9 +1,10 @@
-import 'package:forkball/game_model.dart';
 import 'package:forkball/zugball_fields.dart';
 import 'package:zug_music/sequencer.dart';
 import 'package:zug_music/zug_midi.dart';
 import 'package:zug_music/zug_music.dart';
 import 'game.dart';
+import 'game_event.dart';
+import 'game_model.dart';
 
 class ScoreEvent {
   int runs;
@@ -36,7 +37,7 @@ class GameSonifier {
     });
   }
 
-  sonifyGameLog(List<GameEvent> gameLog, {homeView = true, playMaster = false}) {
+  sonifyGameLog(GameLog gameLog, {homeView = true, playMaster = false}) {
     ZugKey key = const ZugKey(ZugNote.noteA, Scale.majorScale);
     ZugPitch p = ZugPitch(60);
 
@@ -51,7 +52,6 @@ class GameSonifier {
     int chord = 0;
 
     final sequencer = MidiSequencer(midiMgr);
-    sequencer.tempo = 200;
     final masterTrack = MidiTrack('master');
     final homeScoreTrack = MidiTrack('home_score');
     final awayScoreTrack = MidiTrack('away_score');
@@ -69,7 +69,7 @@ class GameSonifier {
     Side battingSide = Side.away;
     Bases bases = Bases(false,false,false);
 
-    for (GameEvent e in gameLog) {
+    for (GameEvent e in gameLog.log) {
       battingSide = Game.getBattingSide(inningHalf: e.inningHalf);
 
       int newInning = e.inning;

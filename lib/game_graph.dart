@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:forkball/play_result.dart';
-import 'game_model.dart';
+import 'game_event.dart';
 
 class GameEventVisualizer extends StatefulWidget {
   final List<GameEvent> events;

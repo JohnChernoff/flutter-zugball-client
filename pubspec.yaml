@@ -47,6 +47,7 @@ dependencies:
   flutter_picker_plus: ^1.5.4
   stop_watch_timer: ^3.2.2
   fl_chart: ^0.65.0
+  http: ^1.5.0
 
 dev_dependencies:
   flutter_test:

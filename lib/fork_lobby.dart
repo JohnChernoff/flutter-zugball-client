@@ -2,6 +2,7 @@ import 'package:forkball/game_graph.dart';
 import 'package:forkball/game_model.dart';
 import 'package:forkball/schedule.dart';
 import 'package:forkball/seasons.dart';
+import 'package:forkball/sonification_widget.dart';
 import 'package:forkball/standings.dart';
 import 'package:zugclient/lobby_page.dart';
 import 'package:flutter/material.dart';
@@ -50,8 +51,8 @@ class ForkLobby extends LobbyPage {
       LobbyView.schedule => SeasonScheduleWidget(model : gameModel,
           selectedTeam: model.getOption(GameOptions.team)?.getEnum(Team.values) as Team),
       LobbyView.standings => StandingsWidget(model: gameModel),
-      LobbyView.gameGraph => GameEventVisualizer(events: gameModel.gameLog),
-    };
+      LobbyView.gameGraph => GameEventVisualizer(events: gameModel.gameLog?.log ?? []),
+      LobbyView.gameVisualizer => SonificationWidgetWrapper(gameModel: gameModel)};
   }
 
 }
